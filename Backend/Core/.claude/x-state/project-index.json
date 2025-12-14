@@ -1,0 +1,171 @@
+{
+  "indexed_at": "2025-12-14T23:35:00Z",
+  "directory": "/Users/serkanozdogan/Desktop/infosys/Backend/Core",
+  "project_name": "NArchitecture Core Packages",
+  "project_type": "dotnet",
+  "solution_file": "CorePackages.sln",
+
+  "tech_stack": {
+    "language": "C# 13",
+    "framework": ".NET 10.0",
+    "packages": {
+      "EntityFrameworkCore": "10.0.1",
+      "MediatR": "14.0.0",
+      "FluentValidation": "12.1.1",
+      "Serilog": "4.3.0",
+      "MailKit": "4.14.1",
+      "MimeKit": "4.14.0",
+      "NEST": "7.17.5",
+      "Microsoft.IdentityModel.Tokens": "8.15.0",
+      "Otp.NET": "1.4.1",
+      "AutoMapper": "13.0.1",
+      "AWSSDK.Translate": "4.0.1.9",
+      "Moq": "4.20.72",
+      "Swashbuckle.AspNetCore.SwaggerGen": "6.9.0"
+    }
+  },
+
+  "statistics": {
+    "total_projects": 26,
+    "cs_files": 198,
+    "lines_of_code": 4767,
+    "pipeline_behaviors": 7,
+    "repository_interfaces": 2
+  },
+
+  "modules": [
+    {
+      "name": "Core.Application",
+      "path": "src/Core.Application",
+      "purpose": "CQRS pipelines, base abstractions, DTOs",
+      "dependencies": ["Core.Security", "Core.CrossCuttingConcerns.Logging", "Core.CrossCuttingConcerns.Exception"]
+    },
+    {
+      "name": "Core.Persistence",
+      "path": "src/Core.Persistence",
+      "purpose": "EF Core repository base classes, paging, dynamic query",
+      "dependencies": []
+    },
+    {
+      "name": "Core.Security",
+      "path": "src/Core.Security",
+      "purpose": "JWT, hashing, OTP, auth entities",
+      "dependencies": ["Core.Persistence"]
+    },
+    {
+      "name": "Core.CrossCuttingConcerns.Exception",
+      "path": "src/Core.CrossCuttingConcerns.Exception",
+      "purpose": "Exception types: Business, Validation, Authorization, NotFound",
+      "dependencies": []
+    },
+    {
+      "name": "Core.CrossCuttingConcerns.Logging",
+      "path": "src/Core.CrossCuttingConcerns.Logging",
+      "purpose": "Log models, structured logging",
+      "dependencies": ["Core.CrossCuttingConcerns.Logging.Abstraction"]
+    },
+    {
+      "name": "Core.Mailing",
+      "path": "src/Core.Mailing",
+      "purpose": "Mail abstractions, IMailService",
+      "dependencies": []
+    },
+    {
+      "name": "Core.ElasticSearch",
+      "path": "src/Core.ElasticSearch",
+      "purpose": "Elasticsearch integration with NEST",
+      "dependencies": []
+    },
+    {
+      "name": "Core.Localization.Abstraction",
+      "path": "src/Core.Localization.Abstraction",
+      "purpose": "Localization service interface",
+      "dependencies": []
+    },
+    {
+      "name": "Core.Translation.Abstraction",
+      "path": "src/Core.Translation.Abstraction",
+      "purpose": "Translation service interface",
+      "dependencies": []
+    }
+  ],
+
+  "detected_patterns": {
+    "cqrs": {
+      "active": true,
+      "evidence": "MediatR 14.0.0, 7 Pipeline Behaviors"
+    },
+    "repository": {
+      "active": true,
+      "evidence": "EfRepositoryBase, IAsyncRepository, IRepository"
+    },
+    "clean_architecture": {
+      "active": true,
+      "evidence": "Layered package structure with clear boundaries"
+    },
+    "dependency_injection": {
+      "active": true,
+      "evidence": "Multiple DI extension packages"
+    },
+    "generic_entity": {
+      "active": true,
+      "evidence": "Entity<TId> base class pattern"
+    }
+  },
+
+  "interfaces": [
+    "ITokenHelper<TUserId, TOperationClaimId, TRefreshTokenId>",
+    "IOtpAuthenticatorHelper",
+    "IEmailAuthenticatorHelper",
+    "IMailService",
+    "ILogger",
+    "ITransactionalRequest",
+    "IIntervalRequest",
+    "ISecuredRequest",
+    "ICacheRemoverRequest",
+    "ICachableRequest",
+    "ILoggableRequest",
+    "IElasticSearch",
+    "ILocalizationService",
+    "IAsyncRepository<TEntity, TEntityId>",
+    "IRepository<TEntity, TEntityId>"
+  ],
+
+  "pipeline_behaviors": [
+    "TransactionScopeBehavior<TRequest, TResponse>",
+    "PerformanceBehavior<TRequest, TResponse>",
+    "AuthorizationBehavior<TRequest, TResponse>",
+    "CachingBehavior<TRequest, TResponse>",
+    "CacheRemovingBehavior<TRequest, TResponse>",
+    "LoggingBehavior<TRequest, TResponse>",
+    "RequestValidationBehavior<TRequest, TResponse>"
+  ],
+
+  "exception_types": [
+    "BusinessException",
+    "NotFoundException",
+    "ValidationException",
+    "AuthorizationException"
+  ],
+
+  "entity_base_classes": [
+    "Entity<TId>",
+    "User<TId>",
+    "OperationClaim<TId>",
+    "UserOperationClaim<TId, TUserId, TOperationClaimId>",
+    "RefreshToken<TId, TUserId>",
+    "OtpAuthenticator<TUserId>",
+    "EmailAuthenticator<TUserId>"
+  ],
+
+  "namespace_root": "NArchitecture.Core",
+
+  "dependency_graph": {
+    "most_referenced": [
+      {"package": "Core.Persistence", "ref_count": 4},
+      {"package": "Core.Localization.Abstraction", "ref_count": 4},
+      {"package": "Core.CrossCuttingConcerns.Logging", "ref_count": 4},
+      {"package": "Core.CrossCuttingConcerns.Logging.Abstraction", "ref_count": 4}
+    ]
+  }
+}

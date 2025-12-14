@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.0.0" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../Core/src/Core.Application/Core.Application.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.Mailing/Core.Mailing.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.Mailing.MailKit/Core.Mailing.MailKit.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.CrossCuttingConcerns.Exception/Core.CrossCuttingConcerns.Exception.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.CrossCuttingConcerns.Logging.Serilog.File/Core.CrossCuttingConcerns.Logging.Serilog.File.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.Localization.Abstraction/Core.Localization.Abstraction.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.Localization.Resource.Yaml.DependencyInjection/Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.ElasticSearch/Core.ElasticSearch.csproj" />
+    <ProjectReference Include="../../../Core/src/Core.Security.DependencyInjection/Core.Security.DependencyInjection.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Services\Repositories" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Features\**\Resources\Locales\*.*.yaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

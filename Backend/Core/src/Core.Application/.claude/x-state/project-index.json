@@ -1,0 +1,217 @@
+{
+  "indexed_at": "2025-12-14T23:41:50Z",
+  "directory": "/Users/serkanozdogan/Desktop/infosys/Backend/Core/src/Core.Application",
+  "project_name": "Core.Application",
+  "namespace": "NArchitecture.Core.Application",
+  "tech_stack": {
+    "language": "C# 13",
+    "framework": ".NET 10.0",
+    "packages": [
+      {
+        "name": "MediatR",
+        "version": "14.0.0"
+      },
+      {
+        "name": "FluentValidation",
+        "version": "12.1.1"
+      },
+      {
+        "name": "FluentValidation.DependencyInjectionExtensions",
+        "version": "12.1.1"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http.Abstractions",
+        "version": "2.3.0"
+      },
+      {
+        "name": "Microsoft.Extensions.Caching.Abstractions",
+        "version": "10.0.1"
+      }
+    ]
+  },
+  "project_references": [
+    "Core.CrossCuttingConcerns.Logging.Abstraction",
+    "Core.CrossCuttingConcerns.Logging",
+    "Core.CrossCuttingConcerns.Exception",
+    "Core.Security"
+  ],
+  "statistics": {
+    "files": 22,
+    "lines": 519,
+    "behaviors": 7,
+    "marker_interfaces": 6
+  },
+  "modules": [
+    {
+      "name": "Pipelines",
+      "submodules": [
+        "Authorization",
+        "Caching",
+        "Logging",
+        "Performance",
+        "Transaction",
+        "Validation"
+      ]
+    },
+    {
+      "name": "Dtos",
+      "files": ["IDto.cs", "UserForLoginDto.cs", "UserForRegisterDto.cs"]
+    },
+    {
+      "name": "Requests",
+      "files": ["PageRequest.cs"]
+    },
+    {
+      "name": "Responses",
+      "files": ["IResponse.cs", "GetListResponse.cs"]
+    },
+    {
+      "name": "Rules",
+      "files": ["BaseBusinessRules.cs"]
+    }
+  ],
+  "patterns": {
+    "pipeline_behaviors": [
+      {
+        "name": "AuthorizationBehavior",
+        "interface": "ISecuredRequest",
+        "purpose": "Role-based authorization"
+      },
+      {
+        "name": "CachingBehavior",
+        "interface": "ICachableRequest",
+        "purpose": "Response caching"
+      },
+      {
+        "name": "CacheRemovingBehavior",
+        "interface": "ICacheRemoverRequest",
+        "purpose": "Cache invalidation"
+      },
+      {
+        "name": "LoggingBehavior",
+        "interface": "ILoggableRequest",
+        "purpose": "Request/response logging"
+      },
+      {
+        "name": "RequestValidationBehavior",
+        "interface": "IValidator<TRequest>",
+        "purpose": "FluentValidation"
+      },
+      {
+        "name": "TransactionScopeBehavior",
+        "interface": "ITransactionalRequest",
+        "purpose": "Transaction scope"
+      },
+      {
+        "name": "PerformanceBehavior",
+        "interface": "IIntervalRequest",
+        "purpose": "Performance monitoring"
+      }
+    ],
+    "marker_interfaces": [
+      "ISecuredRequest",
+      "ICachableRequest",
+      "ICacheRemoverRequest",
+      "ILoggableRequest",
+      "ITransactionalRequest",
+      "IIntervalRequest"
+    ],
+    "base_classes": [
+      "BaseBusinessRules"
+    ],
+    "dto_interfaces": [
+      "IDto",
+      "IResponse"
+    ]
+  },
+  "files": {
+    "Pipelines/Authorization/AuthorizationBehavior.cs": {
+      "lines": 44,
+      "type": "behavior"
+    },
+    "Pipelines/Authorization/ISecuredRequest.cs": {
+      "lines": 6,
+      "type": "interface"
+    },
+    "Pipelines/Caching/CachingBehavior.cs": {
+      "lines": 118,
+      "type": "behavior"
+    },
+    "Pipelines/Caching/CacheRemovingBehavior.cs": {
+      "lines": 62,
+      "type": "behavior"
+    },
+    "Pipelines/Caching/ICachableRequest.cs": {
+      "lines": 9,
+      "type": "interface"
+    },
+    "Pipelines/Caching/ICacheRemoverRequest.cs": {
+      "lines": 8,
+      "type": "interface"
+    },
+    "Pipelines/Caching/CacheSettings.cs": {
+      "lines": 6,
+      "type": "model"
+    },
+    "Pipelines/Logging/LoggingBehavior.cs": {
+      "lines": 40,
+      "type": "behavior"
+    },
+    "Pipelines/Logging/ILoggableRequest.cs": {
+      "lines": 3,
+      "type": "interface"
+    },
+    "Pipelines/Performance/PerformanceBehavior.cs": {
+      "lines": 49,
+      "type": "behavior"
+    },
+    "Pipelines/Performance/IIntervalRequest.cs": {
+      "lines": 6,
+      "type": "interface"
+    },
+    "Pipelines/Transaction/TransactionScopeBehavior.cs": {
+      "lines": 30,
+      "type": "behavior"
+    },
+    "Pipelines/Transaction/ITransactionalRequest.cs": {
+      "lines": 3,
+      "type": "interface"
+    },
+    "Pipelines/Validation/RequestValidationBehavior.cs": {
+      "lines": 41,
+      "type": "behavior"
+    },
+    "Pipelines/Validation/ValidationTool.cs": {
+      "lines": 15,
+      "type": "utility"
+    },
+    "Dtos/IDto.cs": {
+      "lines": 3,
+      "type": "interface"
+    },
+    "Dtos/UserForLoginDto.cs": {
+      "lines": 26,
+      "type": "dto"
+    },
+    "Dtos/UserForRegisterDto.cs": {
+      "lines": 23,
+      "type": "dto"
+    },
+    "Requests/PageRequest.cs": {
+      "lines": 7,
+      "type": "model"
+    },
+    "Responses/IResponse.cs": {
+      "lines": 3,
+      "type": "interface"
+    },
+    "Responses/GetListResponse.cs": {
+      "lines": 14,
+      "type": "response"
+    },
+    "Rules/BaseBusinessRules.cs": {
+      "lines": 3,
+      "type": "base_class"
+    }
+  }
+}

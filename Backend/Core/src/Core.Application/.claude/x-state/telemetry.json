@@ -1,0 +1,50 @@
+{
+  "session_id": "session-20251214234150-77054977",
+  "started_at": "2025-12-14T20:41:50Z",
+  "project": "/Users/serkanozdogan/Desktop/infosys/Backend/Core/src/Core.Application",
+  "user": "archolet@users.noreply.github.com",
+  "events": [
+    {
+      "event_id": "evt-20251214234150-188eddf1",
+      "event_type": "session_start",
+      "timestamp": "2025-12-14T20:41:50.000Z",
+      "data": {}
+    },
+    {
+      "event_id": "evt-20251214234157-01539847",
+      "event_type": "agent_invoked",
+      "timestamp": "2025-12-14T20:41:57.000Z",
+      "data": {}
+    },
+    {
+      "event_id": "evt-20251214234159-82a8007a",
+      "event_type": "agent_invoked",
+      "timestamp": "2025-12-14T20:41:59.000Z",
+      "data": {}
+    },
+    {
+      "event_id": "evt-20251214234718-9afb0edb",
+      "event_type": "session_end",
+      "timestamp": "2025-12-14T20:47:18.000Z",
+      "data": {}
+    },
+    {
+      "event_id": "evt-20251214234727-6eb07b1b",
+      "event_type": "agent_invoked",
+      "timestamp": "2025-12-14T20:47:27.000Z",
+      "data": {}
+    }
+  ],
+  "totals": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "thinking_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0,
+    "duration_minutes": 185,
+    "commands_executed": 0,
+    "agents_invoked": 3,
+    "errors": 0,
+    "rollbacks": 0
+  }
+}

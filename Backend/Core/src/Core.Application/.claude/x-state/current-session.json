@@ -1,0 +1,14 @@
+{
+  "session_id": "session-20251214234150-77054977",
+  "started_at": "2025-12-14T20:41:50Z",
+  "user": "archolet@users.noreply.github.com",
+  "project": "/Users/serkanozdogan/Desktop/infosys/Backend/Core/src/Core.Application",
+  "project_hash": "",
+  "status": "completed",
+  "context_usage": 0,
+  "checkpoints": [],
+  "rollback_points": [],
+  "last_activity": "2025-12-14T20:47:27Z",
+  "ended_at": "2025-12-14T20:47:18Z",
+  "duration_minutes": 185
+}
