@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:18.1
+    container_name: infosys-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: infosys
+      POSTGRES_PASSWORD: InfoSYS_2024!
+      POSTGRES_DB: InfoSYSDb
+    ports:
+      - "5432:5432"
+    volumes:
+      # PostgreSQL 18+ için /var/lib/postgresql mount edilmeli (data subdirectory otomatik oluşur)
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U infosys -d InfoSYSDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
