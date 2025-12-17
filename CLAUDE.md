@@ -15,14 +15,14 @@ dotnet test Backend/tests/StarterProject.Application.Tests/
 dotnet test Backend/tests/StarterProject.Application.Tests/ --filter "FullyQualifiedName~LoginTests"
 
 # Run API (default: https://localhost:5001)
-dotnet run --project Backend/src/starterProject/WebAPI/
+dotnet run --project Backend/src/WebAPI/
 
 # Format code
 dotnet csharpier Backend/
 
 # EF Core migrations
-dotnet ef migrations add MigrationName --project Backend/src/starterProject/Persistence/ --startup-project Backend/src/starterProject/WebAPI/
-dotnet ef database update --project Backend/src/starterProject/Persistence/ --startup-project Backend/src/starterProject/WebAPI/
+dotnet ef migrations add MigrationName --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
+dotnet ef database update --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
 ```
 
 ## Tech Stack
@@ -47,7 +47,7 @@ Backend/
 │       ├── Core.Persistence/       # EfRepositoryBase, Entity base class
 │       └── Core.Security/          # JWT, Hashing, Auth entities
 │
-└── src/starterProject/
+└── src/
     ├── Domain/Entities/            # Entity classes
     ├── Application/
     │   ├── Features/               # CQRS Commands & Queries
