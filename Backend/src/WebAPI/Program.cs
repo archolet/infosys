@@ -58,12 +58,11 @@ builder
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors(opt =>
-    opt.AddDefaultPolicy(p =>
-    {
-        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    })
-);
+
+// CORS is configured in UseCors() below with specific allowed origins from configuration
+// Avoid registering a permissive default policy that could be accidentally used
+builder.Services.AddCors();
+
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.AddSecurityDefinition(
