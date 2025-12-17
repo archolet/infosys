@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
-using NArchitecture.Core.Persistence.Dynamic;
-using NArchitecture.Core.Persistence.Paging;
+using InfoSystem.Core.Persistence.Dynamic;
+using InfoSystem.Core.Persistence.Paging;
 
-namespace NArchitecture.Core.Persistence.Repositories;
+namespace InfoSystem.Core.Persistence.Repositories;
 
 public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity>
     where TEntity : Entity<TEntityId>

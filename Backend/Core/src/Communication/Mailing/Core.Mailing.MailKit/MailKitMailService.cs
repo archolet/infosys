@@ -1,11 +1,11 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Cryptography;
-using NArchitecture.Core.Mailing;
+using InfoSystem.Core.Mailing;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 
-namespace NArchitecture.Core.Mailing.MailKit;
+namespace InfoSystem.Core.Mailing.MailKit;
 
 public class MailKitMailService : IMailService
 {

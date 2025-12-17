@@ -1,7 +1,7 @@
 ﻿using Application.Features.Users.Commands.Update;
 using FluentValidation.Results;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.Types;
-using NArchitecture.Core.Test.Application.Constants;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.Types;
+using InfoSystem.Core.Test.Application.Constants;
 using StarterProject.Application.Tests.Mocks.FakeDatas;
 using StarterProject.Application.Tests.Mocks.Repositories;
 using static Application.Features.Users.Commands.Update.UpdateUserCommand;

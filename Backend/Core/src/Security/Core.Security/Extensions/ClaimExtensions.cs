@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace NArchitecture.Core.Security.Extensions;
+namespace InfoSystem.Core.Security.Extensions;
 
 public static class ClaimExtensions
 {

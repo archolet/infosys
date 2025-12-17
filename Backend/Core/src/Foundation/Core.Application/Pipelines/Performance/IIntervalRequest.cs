@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Application.Pipelines.Performance;
+﻿namespace InfoSystem.Core.Application.Pipelines.Performance;
 
 public interface IIntervalRequest
 {

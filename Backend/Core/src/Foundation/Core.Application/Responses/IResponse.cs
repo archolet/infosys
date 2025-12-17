@@ -1,3 +1,3 @@
-﻿namespace NArchitecture.Core.Application.Responses;
+﻿namespace InfoSystem.Core.Application.Responses;
 
 public interface IResponse { }

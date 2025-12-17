@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Test.Application.Constants;
+﻿namespace InfoSystem.Core.Test.Application.Constants;
 
 public static class ValidationErrorCodes
 {

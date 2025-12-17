@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace NArchitecture.Core.Application.Pipelines.Caching;
+namespace InfoSystem.Core.Application.Pipelines.Caching;
 
 public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ICachableRequest

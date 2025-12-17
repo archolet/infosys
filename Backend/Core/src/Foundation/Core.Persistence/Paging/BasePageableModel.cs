@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Persistence.Paging;
+﻿namespace InfoSystem.Core.Persistence.Paging;
 
 public abstract class BasePageableModel
 {

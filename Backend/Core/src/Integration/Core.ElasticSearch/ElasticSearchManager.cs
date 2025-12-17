@@ -1,11 +1,11 @@
 ﻿using Elasticsearch.Net;
-using NArchitecture.Core.ElasticSearch.Constants;
-using NArchitecture.Core.ElasticSearch.Models;
+using InfoSystem.Core.ElasticSearch.Constants;
+using InfoSystem.Core.ElasticSearch.Models;
 using Nest;
 using Nest.JsonNetSerializer;
 using Newtonsoft.Json;
 
-namespace NArchitecture.Core.ElasticSearch;
+namespace InfoSystem.Core.ElasticSearch;
 
 public class ElasticSearchManager : IElasticSearch
 {

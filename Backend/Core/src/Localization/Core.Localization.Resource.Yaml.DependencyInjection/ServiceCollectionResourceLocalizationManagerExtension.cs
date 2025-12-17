@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using NArchitecture.Core.Localization.Abstraction;
+using InfoSystem.Core.Localization.Abstraction;
 
-namespace NArchitecture.Core.Localization.Resource.Yaml.DependencyInjection;
+namespace InfoSystem.Core.Localization.Resource.Yaml.DependencyInjection;
 
 public static class ServiceCollectionResourceLocalizationManagerExtension
 {

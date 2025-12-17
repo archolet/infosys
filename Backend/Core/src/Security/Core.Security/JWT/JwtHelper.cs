@@ -4,11 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
-using NArchitecture.Core.Security.Encryption;
-using NArchitecture.Core.Security.Entities;
-using NArchitecture.Core.Security.Extensions;
+using InfoSystem.Core.Security.Encryption;
+using InfoSystem.Core.Security.Entities;
+using InfoSystem.Core.Security.Extensions;
 
-namespace NArchitecture.Core.Security.JWT;
+namespace InfoSystem.Core.Security.JWT;
 
 public class JwtHelper<TUserId, TOperationClaimId, TRefreshTokenId> : ITokenHelper<TUserId, TOperationClaimId, TRefreshTokenId>
 {

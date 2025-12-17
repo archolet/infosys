@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using NArchitecture.Core.Persistence.DbMigrationApplier;
+using InfoSystem.Core.Persistence.DbMigrationApplier;
 
-namespace NArchitecture.Core.Persistence.WebApi;
+namespace InfoSystem.Core.Persistence.WebApi;
 
 public static class ApplicationBuilderDbMigrationApplierExtensions
 {

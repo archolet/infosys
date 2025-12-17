@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Security.Enums;
+﻿namespace InfoSystem.Core.Security.Enums;
 
 public enum AuthenticatorType
 {

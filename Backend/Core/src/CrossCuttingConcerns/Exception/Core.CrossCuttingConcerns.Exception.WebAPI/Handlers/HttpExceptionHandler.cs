@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.Handlers;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.Types;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.HttpProblemDetails;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.Handlers;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.Types;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.HttpProblemDetails;
 
-namespace NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Handlers;
+namespace InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Handlers;
 
 public class HttpExceptionHandler : ExceptionHandler
 {

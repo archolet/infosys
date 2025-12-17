@@ -1,8 +1,8 @@
-﻿using NArchitecture.Core.CrossCuttingConcerns.Logging.Configurations;
-using NArchitecture.Core.CrossCuttingConcerns.Logging.Serilog;
+﻿using InfoSystem.Core.CrossCuttingConcerns.Logging.Configurations;
+using InfoSystem.Core.CrossCuttingConcerns.Logging.Serilog;
 using Serilog;
 
-namespace NArchitecture.Core.CrossCuttingConcerns.Logging.Serilog.File;
+namespace InfoSystem.Core.CrossCuttingConcerns.Logging.Serilog.File;
 
 public class SerilogFileLogger : SerilogLoggerServiceBase
 {

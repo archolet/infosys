@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Security.Constants;
+﻿namespace InfoSystem.Core.Security.Constants;
 
 public static class GeneralOperationClaims
 {

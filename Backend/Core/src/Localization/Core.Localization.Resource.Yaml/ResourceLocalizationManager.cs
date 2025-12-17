@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using NArchitecture.Core.Localization.Abstraction;
+using InfoSystem.Core.Localization.Abstraction;
 using YamlDotNet.RepresentationModel;
 
-namespace NArchitecture.Core.Localization.Resource.Yaml;
+namespace InfoSystem.Core.Localization.Resource.Yaml;
 
 public class ResourceLocalizationManager : ILocalizationService
 {

@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Mailing;
+﻿namespace InfoSystem.Core.Mailing;
 
 public class MailSettings
 {

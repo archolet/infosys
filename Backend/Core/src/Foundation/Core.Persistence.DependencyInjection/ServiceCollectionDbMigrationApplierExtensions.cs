@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NArchitecture.Core.Persistence.DbMigrationApplier;
+using InfoSystem.Core.Persistence.DbMigrationApplier;
 
-namespace NArchitecture.Core.Persistence.DependencyInjection;
+namespace InfoSystem.Core.Persistence.DependencyInjection;
 
 public static class ServiceCollectionDbMigrationApplierExtensions
 {

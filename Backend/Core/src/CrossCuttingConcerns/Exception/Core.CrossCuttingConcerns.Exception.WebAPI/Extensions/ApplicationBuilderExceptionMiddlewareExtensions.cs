@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
 
-namespace NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
+namespace InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 
 public static class ApplicationBuilderExceptionMiddlewareExtensions
 {

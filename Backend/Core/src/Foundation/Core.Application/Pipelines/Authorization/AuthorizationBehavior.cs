@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.Types;
-using NArchitecture.Core.Security.Constants;
-using NArchitecture.Core.Security.Extensions;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.Types;
+using InfoSystem.Core.Security.Constants;
+using InfoSystem.Core.Security.Extensions;
 
-namespace NArchitecture.Core.Application.Pipelines.Authorization;
+namespace InfoSystem.Core.Application.Pipelines.Authorization;
 
 public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ISecuredRequest

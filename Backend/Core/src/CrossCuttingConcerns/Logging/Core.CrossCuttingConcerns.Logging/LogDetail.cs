@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.CrossCuttingConcerns.Logging;
+﻿namespace InfoSystem.Core.CrossCuttingConcerns.Logging;
 
 public class LogDetail
 {

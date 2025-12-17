@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
-using NArchitecture.Core.Security.Hashing;
-using NArchitecture.Core.Test.Application.FakeData;
+using InfoSystem.Core.Security.Hashing;
+using InfoSystem.Core.Test.Application.FakeData;
 
 namespace StarterProject.Application.Tests.Mocks.FakeDatas;
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NArchitecture.Core.Translation.Abstraction;
-using NArchitecture.Core.Translation.AmazonTranslate;
+using InfoSystem.Core.Translation.Abstraction;
+using InfoSystem.Core.Translation.AmazonTranslate;
 
-namespace NArchitecture.Core.Translation.AmazonTranslate.DependencyInjection;
+namespace InfoSystem.Core.Translation.AmazonTranslate.DependencyInjection;
 
 public static class ServiceCollectionAmazonTranslateLocalizationExtension
 {

@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.Translation.Abstraction;
+﻿namespace InfoSystem.Core.Translation.Abstraction;
 
 public interface ITranslationService
 {

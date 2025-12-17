@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace NArchitecture.Core.Security.WebApi.Swagger.Extensions;
+namespace InfoSystem.Core.Security.WebApi.Swagger.Extensions;
 
 public class BearerSecurityRequirementOperationFilter : IOperationFilter
 {

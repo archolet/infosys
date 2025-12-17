@@ -1,11 +1,11 @@
 ﻿using System.Net.Mime;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Handlers;
-using NArchitecture.Core.CrossCuttingConcerns.Logging;
-using NArchitecture.Core.CrossCuttingConcerns.Logging.Abstraction;
+using InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Handlers;
+using InfoSystem.Core.CrossCuttingConcerns.Logging;
+using InfoSystem.Core.CrossCuttingConcerns.Logging.Abstraction;
 
-namespace NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
+namespace InfoSystem.Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
 
 public class ExceptionMiddleware
 {

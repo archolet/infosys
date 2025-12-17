@@ -1,4 +1,4 @@
-﻿namespace NArchitecture.Core.ElasticSearch.Models;
+﻿namespace InfoSystem.Core.ElasticSearch.Models;
 
 public class SearchByFieldParameters : SearchParameters
 {
