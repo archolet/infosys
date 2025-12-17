@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core.Localization.Abstraction\Core.Localization.Abstraction.csproj" />
-    <ProjectReference Include="..\Core.Translation.Abstraction\Core.Translation.Abstraction.csproj" />
+    <ProjectReference Include="..\..\Translation\Core.Translation.Abstraction\Core.Translation.Abstraction.csproj" />
   </ItemGroup>
 </Project>

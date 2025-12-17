@@ -12,9 +12,9 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging.Abstraction\Core.CrossCuttingConcerns.Logging.Abstraction.csproj" />
-    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging\Core.CrossCuttingConcerns.Logging.csproj" />
-    <ProjectReference Include="..\Core.CrossCuttingConcerns.Exception\Core.CrossCuttingConcerns.Exception.csproj" />
-    <ProjectReference Include="..\Core.Security\Core.Security.csproj" />
+    <ProjectReference Include="..\..\CrossCuttingConcerns\Logging\Core.CrossCuttingConcerns.Logging.Abstraction\Core.CrossCuttingConcerns.Logging.Abstraction.csproj" />
+    <ProjectReference Include="..\..\CrossCuttingConcerns\Logging\Core.CrossCuttingConcerns.Logging\Core.CrossCuttingConcerns.Logging.csproj" />
+    <ProjectReference Include="..\..\CrossCuttingConcerns\Exception\Core.CrossCuttingConcerns.Exception\Core.CrossCuttingConcerns.Exception.csproj" />
+    <ProjectReference Include="..\..\Security\Core.Security\Core.Security.csproj" />
   </ItemGroup>
 </Project>

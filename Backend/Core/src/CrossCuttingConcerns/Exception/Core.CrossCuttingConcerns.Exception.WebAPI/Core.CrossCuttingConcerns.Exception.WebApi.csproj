@@ -10,8 +10,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging.Abstraction\Core.CrossCuttingConcerns.Logging.Abstraction.csproj" />
-    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging\Core.CrossCuttingConcerns.Logging.csproj" />
+    <ProjectReference Include="..\..\Logging\Core.CrossCuttingConcerns.Logging.Abstraction\Core.CrossCuttingConcerns.Logging.Abstraction.csproj" />
+    <ProjectReference Include="..\..\Logging\Core.CrossCuttingConcerns.Logging\Core.CrossCuttingConcerns.Logging.csproj" />
     <ProjectReference Include="..\Core.CrossCuttingConcerns.Exception\Core.CrossCuttingConcerns.Exception.csproj" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
     <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Core/src/Core.Persistence/Core.Persistence.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Security/Core.Security.csproj" />
+    <ProjectReference Include="../../../Core/src/Foundation/Core.Persistence/Core.Persistence.csproj" />
+    <ProjectReference Include="../../../Core/src/Security/Core.Security/Core.Security.csproj" />
   </ItemGroup>
 </Project>

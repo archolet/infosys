@@ -12,15 +12,15 @@
     <PackageReference Include="MediatR" Version="14.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Core/src/Core.Application/Core.Application.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Mailing/Core.Mailing.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Mailing.MailKit/Core.Mailing.MailKit.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.CrossCuttingConcerns.Exception/Core.CrossCuttingConcerns.Exception.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.CrossCuttingConcerns.Logging.Serilog.File/Core.CrossCuttingConcerns.Logging.Serilog.File.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Localization.Abstraction/Core.Localization.Abstraction.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Localization.Resource.Yaml.DependencyInjection/Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.ElasticSearch/Core.ElasticSearch.csproj" />
-    <ProjectReference Include="../../../Core/src/Core.Security.DependencyInjection/Core.Security.DependencyInjection.csproj" />
+    <ProjectReference Include="../../../Core/src/Foundation/Core.Application/Core.Application.csproj" />
+    <ProjectReference Include="../../../Core/src/Communication/Mailing/Core.Mailing/Core.Mailing.csproj" />
+    <ProjectReference Include="../../../Core/src/Communication/Mailing/Core.Mailing.MailKit/Core.Mailing.MailKit.csproj" />
+    <ProjectReference Include="../../../Core/src/CrossCuttingConcerns/Exception/Core.CrossCuttingConcerns.Exception/Core.CrossCuttingConcerns.Exception.csproj" />
+    <ProjectReference Include="../../../Core/src/CrossCuttingConcerns/Logging/Core.CrossCuttingConcerns.Logging.Serilog.File/Core.CrossCuttingConcerns.Logging.Serilog.File.csproj" />
+    <ProjectReference Include="../../../Core/src/Localization/Core.Localization.Abstraction/Core.Localization.Abstraction.csproj" />
+    <ProjectReference Include="../../../Core/src/Localization/Core.Localization.Resource.Yaml.DependencyInjection/Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
+    <ProjectReference Include="../../../Core/src/Integration/Core.ElasticSearch/Core.ElasticSearch.csproj" />
+    <ProjectReference Include="../../../Core/src/Security/Core.Security.DependencyInjection/Core.Security.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

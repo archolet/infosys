@@ -12,6 +12,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core.Persistence\Core.Persistence.csproj" />
+    <ProjectReference Include="..\..\Foundation\Core.Persistence\Core.Persistence.csproj" />
   </ItemGroup>
 </Project>
