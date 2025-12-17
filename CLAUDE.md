@@ -41,19 +41,39 @@ dotnet ef database update --project Backend/src/Persistence/ --startup-project B
 
 ```
 Backend/
-├── Core/                           # Reusable framework packages
+├── Core/                                    # InfoSYS Core packages (26 projects)
 │   └── src/
-│       ├── Core.Application/       # Pipeline behaviors, base abstractions
-│       ├── Core.Persistence/       # EfRepositoryBase, Entity base class
-│       └── Core.Security/          # JWT, Hashing, Auth entities
+│       ├── Foundation/                      # Temel yapı taşları
+│       │   ├── Core.Application/            # Pipeline behaviors, base abstractions
+│       │   ├── Core.Persistence/            # EfRepositoryBase, Entity base class
+│       │   └── Core.Persistence.WebApi/     # Persistence middleware
+│       │
+│       ├── Security/                        # Güvenlik
+│       │   ├── Core.Security/               # JWT, Hashing, Auth entities
+│       │   ├── Core.Security.WebApi.Swagger/# Swagger security
+│       │   └── Core.Security.DependencyInjection/
+│       │
+│       ├── CrossCuttingConcerns/            # Kesişen ilgiler
+│       │   ├── Exception/                   # Exception types & middleware
+│       │   └── Logging/                     # Serilog implementation
+│       │
+│       ├── Communication/                   # İletişim
+│       │   ├── Mailing/                     # MailKit implementation
+│       │   ├── Sms/                         # SMS services
+│       │   └── Push/                        # Push notifications
+│       │
+│       ├── Localization/                    # Lokalizasyon (YAML-based)
+│       ├── Integration/                     # External services (ElasticSearch)
+│       ├── Translation/                     # Amazon Translate
+│       └── Testing/                         # Test utilities
 │
 └── src/
-    ├── Domain/Entities/            # Entity classes
+    ├── Domain/Entities/                     # Entity classes
     ├── Application/
-    │   ├── Features/               # CQRS Commands & Queries
-    │   └── Services/Repositories/  # Repository interfaces
-    ├── Persistence/Repositories/   # Repository implementations
-    └── WebAPI/Controllers/         # Thin controllers using MediatR
+    │   ├── Features/                        # CQRS Commands & Queries
+    │   └── Services/Repositories/           # Repository interfaces
+    ├── Persistence/Repositories/            # Repository implementations
+    └── WebAPI/Controllers/                  # Thin controllers using MediatR
 ```
 
 ## CQRS Pattern
@@ -246,6 +266,45 @@ Features/{FeatureName}/
 
 - `appsettings.json` - JWT TokenOptions, ConnectionStrings, MailSettings
 - Localization YAML files in `Resources/` directory
+
+### Database (PostgreSQL)
+
+```bash
+# Docker ile PostgreSQL başlat
+docker run --name infosys-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=InfoSYSDb -p 5432:5432 -d postgres:16
+
+# Connection string (appsettings.Development.json)
+"ConnectionStrings": {
+  "BaseDb": "Host=localhost;Port=5432;Database=InfoSYSDb;Username=postgres;Password=postgres"
+}
+```
+
+### Swagger JWT Authentication
+
+Swagger UI'da JWT authentication için:
+
+```csharp
+// Program.cs - Swashbuckle 10.x + Microsoft.OpenApi 2.x
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+    
+    // CRITICAL: Delegate syntax gerekli (Microsoft.OpenApi 2.x breaking change)
+    opt.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+});
+```
+
+> **Not:** Token süresi 8 saat (480 dakika) olarak ayarlanmıştır.
 
 ## Additional References
 

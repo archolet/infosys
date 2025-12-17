@@ -1,15 +1,11 @@
-﻿using System.Text.Json.Serialization;
-
-namespace InfoSystem.Core.Application.Dtos;
+﻿namespace InfoSystem.Core.Application.Dtos;
 
 public class UserForLoginDto : IDto
 {
     public required string Email { get; set; }
 
-    [JsonIgnore]
     public string Password { get; set; }
 
-    [JsonIgnore]
     public string? AuthenticatorCode { get; set; }
 
     public UserForLoginDto()

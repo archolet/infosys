@@ -80,7 +80,13 @@ builder.Services.AddSwaggerGen(opt =>
                 + "`Enter your token in the text input below.`"
         }
     );
-    opt.OperationFilter<BearerSecurityRequirementOperationFilter>();
+    
+    // Global security requirement - applies Bearer auth to all endpoints
+    // NOTE: Swashbuckle 10.x with Microsoft.OpenApi 2.x requires delegate syntax
+    opt.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
 });
 
 WebApplication app = builder.Build();

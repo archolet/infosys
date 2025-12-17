@@ -1,6 +1,6 @@
 # Project Index
 
-> Generated: 2025-12-15 | Version: 1.0.0 | InfoSYS - .NET 10.0 Clean Architecture Backend with CQRS
+> Updated: 2025-12-18 | Version: 1.1.0 | InfoSYS - .NET 10.0 Clean Architecture Backend with CQRS (PostgreSQL)
 
 ## Project Structure
 
@@ -8,51 +8,79 @@
 Backend/
 ├── Core/                                    # InfoSYS Core packages (26 projects, 120 files)
 │   └── src/
-│       ├── Core.Application/                # CQRS pipelines, base abstractions (15 files)
-│       │   ├── Pipelines/                   # MediatR pipeline behaviors
-│       │   │   ├── Authorization/           # Role-based auth (ISecuredRequest)
-│       │   │   ├── Caching/                 # Distributed cache (ICachableRequest)
-│       │   │   ├── Logging/                 # Request logging (ILoggableRequest)
-│       │   │   ├── Performance/             # Performance monitoring (IIntervalRequest)
-│       │   │   ├── Transaction/             # Transaction scope (ITransactionalRequest)
-│       │   │   └── Validation/              # FluentValidation integration
-│       │   ├── Dtos/                        # Base DTOs (UserForLoginDto, UserForRegisterDto)
-│       │   ├── Requests/                    # PageRequest
-│       │   ├── Responses/                   # GetListResponse<T>, IResponse
-│       │   └── Rules/                       # BaseBusinessRules
+│       ├── Foundation/                      # Temel yapı taşları
+│       │   ├── Core.Application/            # CQRS pipelines, base abstractions (15 files)
+│       │   │   ├── Pipelines/               # MediatR pipeline behaviors
+│       │   │   │   ├── Authorization/       # Role-based auth (ISecuredRequest)
+│       │   │   │   ├── Caching/             # Distributed cache (ICachableRequest)
+│       │   │   │   ├── Logging/             # Request logging (ILoggableRequest)
+│       │   │   │   ├── Performance/         # Performance monitoring (IIntervalRequest)
+│       │   │   │   ├── Transaction/         # Transaction scope (ITransactionalRequest)
+│       │   │   │   └── Validation/          # FluentValidation integration
+│       │   │   ├── Dtos/                    # Base DTOs
+│       │   │   ├── Requests/                # PageRequest
+│       │   │   ├── Responses/               # GetListResponse<T>, IResponse
+│       │   │   └── Rules/                   # BaseBusinessRules
+│       │   │
+│       │   ├── Core.Persistence/            # EF Core repository base (18 files)
+│       │   │   ├── Repositories/            # EfRepositoryBase, Entity<TId>
+│       │   │   ├── Paging/                  # IPaginate<T>, Paginate<T>
+│       │   │   ├── Dynamic/                 # DynamicQuery, Filter, Sort
+│       │   │   └── DbMigrationApplier/      # Auto migration support
+│       │   │
+│       │   └── Core.Persistence.WebApi/     # Persistence middleware
 │       │
-│       ├── Core.Persistence/                # EF Core repository base (18 files)
-│       │   ├── Repositories/                # EfRepositoryBase, Entity<TId>
-│       │   ├── Paging/                      # IPaginate<T>, Paginate<T>
-│       │   ├── Dynamic/                     # DynamicQuery, Filter, Sort
-│       │   └── DbMigrationApplier/          # Auto migration support
+│       ├── Security/                        # Güvenlik
+│       │   ├── Core.Security/               # JWT, Hashing, Auth (21 files)
+│       │   │   ├── JWT/                     # JwtHelper, TokenOptions, AccessToken
+│       │   │   ├── Hashing/                 # HashingHelper (HMACSHA512)
+│       │   │   ├── Encryption/              # SecurityKeyHelper, SigningCredentialsHelper
+│       │   │   ├── OtpAuthenticator/        # OtpNetOtpAuthenticatorHelper
+│       │   │   ├── EmailAuthenticator/      # EmailAuthenticatorHelper
+│       │   │   ├── Entities/                # User, OperationClaim, RefreshToken, etc.
+│       │   │   ├── Extensions/              # ClaimExtensions, ClaimsPrincipalExtensions
+│       │   │   └── Constants/               # GeneralOperationClaims
+│       │   │
+│       │   ├── Core.Security.WebApi.Swagger/# Swagger JWT security
+│       │   └── Core.Security.DependencyInjection/
 │       │
-│       ├── Core.Security/                   # JWT, Hashing, Auth (21 files)
-│       │   ├── JWT/                         # JwtHelper, TokenOptions, AccessToken
-│       │   ├── Hashing/                     # HashingHelper (HMACSHA512)
-│       │   ├── Encryption/                  # SecurityKeyHelper, SigningCredentialsHelper
-│       │   ├── OtpAuthenticator/            # OtpNetOtpAuthenticatorHelper
-│       │   ├── EmailAuthenticator/          # EmailAuthenticatorHelper
-│       │   ├── Entities/                    # User, OperationClaim, RefreshToken, etc.
-│       │   ├── Extensions/                  # ClaimExtensions, ClaimsPrincipalExtensions
-│       │   └── Constants/                   # GeneralOperationClaims
+│       ├── CrossCuttingConcerns/            # Kesişen ilgiler (8 projects)
+│       │   ├── Exception/                   # Exception types
+│       │   │   ├── Core.CrossCuttingConcerns.Exception/    # BusinessException, ValidationException
+│       │   │   └── Core.CrossCuttingConcerns.Exception.WebApi/ # HTTP ProblemDetails, Middleware
+│       │   │
+│       │   └── Logging/                     # Logging infrastructure
+│       │       ├── Core.CrossCuttingConcerns.Logging/           # LogDetail, LogParameter
+│       │       ├── Core.CrossCuttingConcerns.Logging.Abstraction/ # ILogger interface
+│       │       ├── Core.CrossCuttingConcerns.Logging.SeriLog/   # SerilogLoggerServiceBase
+│       │       └── Core.CrossCuttingConcerns.Logging.Serilog.File/ # SerilogFileLogger
 │       │
-│       ├── Core.CrossCuttingConcerns.*/     # Logging & Exception (8 projects)
-│       │   ├── Exception/                   # BusinessException, ValidationException, etc.
-│       │   ├── Exception.WebAPI/            # HTTP ProblemDetails, ExceptionMiddleware
-│       │   ├── Logging/                     # LogDetail, LogParameter
-│       │   ├── Logging.Abstraction/         # ILogger interface
-│       │   ├── Logging.SeriLog/             # SerilogLoggerServiceBase
-│       │   └── Logging.Serilog.File/        # SerilogFileLogger
+│       ├── Communication/                   # İletişim
+│       │   ├── Mailing/                     # E-posta
+│       │   │   ├── Core.Mailing/            # Mail abstractions (4 files)
+│       │   │   └── Core.Mailing.MailKit/    # MailKit implementation
+│       │   ├── Sms/                         # SMS services
+│       │   └── Push/                        # Push notifications
 │       │
-│       ├── Core.Mailing/                    # Mail abstractions (4 files)
-│       ├── Core.Mailing.MailKit/            # MailKit implementation
-│       ├── Core.ElasticSearch/              # NEST Elasticsearch (14 files)
-│       ├── Core.Localization.*/             # YAML resource localization (5 projects)
-│       ├── Core.Translation.*/              # Amazon Translate (3 projects)
-│       └── Core.Test/                       # Test utilities (4 files)
+│       ├── Localization/                    # Lokalizasyon (5 projects)
+│       │   ├── Core.Localization.Abstraction/
+│       │   ├── Core.Localization.Resource.Yaml/
+│       │   ├── Core.Localization.Resource.Yaml.DependencyInjection/
+│       │   ├── Core.Localization.Translation/
+│       │   └── Core.Localization.WebApi/
+│       │
+│       ├── Integration/                     # Dış entegrasyonlar
+│       │   └── Core.ElasticSearch/          # NEST Elasticsearch (14 files)
+│       │
+│       ├── Translation/                     # Çeviri (3 projects)
+│       │   ├── Core.Translation.Abstraction/
+│       │   ├── Core.Translation.AmazonTranslate/
+│       │   └── Core.Translation.AmazonTranslate.DependencyInjection/
+│       │
+│       └── Testing/                         # Test
+│           └── Core.Test/                   # Test utilities (4 files)
 │
-├── src/starterProject/                      # Main application (119 files, 4,330 LOC)
+├── src/                                     # Main application (119 files, 4,330 LOC)
 │   ├── Domain/                              # Entities (6 entities)
 │   │   └── Entities/
 │   │       ├── User.cs                      # System user entity
@@ -254,10 +282,13 @@ public static class HashingHelper
 
 ```json
 {
+  "ConnectionStrings": {
+    "BaseDb": "Host=localhost;Port=5432;Database=InfoSYSDb;Username=postgres;Password=postgres"
+  },
   "TokenOptions": {
-    "AccessTokenExpiration": 10,
+    "AccessTokenExpiration": 480,
     "Audience": "starterProject@kodlama.io",
-    "Issuer": "infosys@kodlama.io",
+    "Issuer": "nArchitecture@kodlama.io",
     "RefreshTokenTTL": 2,
     "SecurityKey": "StrongAndSecretKey..."
   },
@@ -273,6 +304,17 @@ public static class HashingHelper
     "ConnectionString": "http://localhost:9200"
   }
 }
+```
+
+### Database (PostgreSQL)
+
+```bash
+# Docker ile PostgreSQL başlat
+docker run --name infosys-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=InfoSYSDb \
+  -p 5432:5432 -d postgres:16
 ```
 
 ## Key Dependencies
@@ -295,7 +337,7 @@ public static class HashingHelper
 | Swashbuckle.AspNetCore | 10.0.1 | Swagger/OpenAPI | |
 | Microsoft.AspNetCore.Authentication.JwtBearer | 10.0.1 | JWT auth middleware | |
 | Microsoft.Extensions.Caching.StackExchangeRedis | 10.0.1 | Redis caching | |
-| Microsoft.EntityFrameworkCore.SqlServer | 10.0.1 | SQL Server provider | |
+| Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.2 | PostgreSQL provider | |
 | System.Linq.Dynamic.Core | 1.7.1 | Dynamic LINQ | |
 
 ### Development
@@ -386,6 +428,13 @@ User (1) ←──────→ (*) UserOperationClaim (*) ←─────�
 ## Quick Start
 
 ```bash
+# Start PostgreSQL (Docker)
+docker run --name infosys-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=InfoSYSDb \
+  -p 5432:5432 -d postgres:16
+
 # Restore dependencies
 dotnet restore Backend/InfoSYS.sln
 
@@ -396,7 +445,7 @@ dotnet build Backend/InfoSYS.sln
 dotnet test Backend/tests/StarterProject.Application.Tests/
 
 # Run API (Development)
-dotnet run --project Backend/src/starterProject/WebAPI/
+dotnet run --project Backend/src/WebAPI/
 
 # Format code
 dotnet csharpier Backend/
@@ -405,10 +454,10 @@ dotnet csharpier Backend/
 dotnet roslynator analyze Backend/InfoSYS.sln
 
 # Create migration
-dotnet ef migrations add MigrationName --project Backend/src/starterProject/Persistence/
+dotnet ef migrations add MigrationName --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
 
 # Update database
-dotnet ef database update --project Backend/src/starterProject/Persistence/
+dotnet ef database update --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
 ```
 
 ### Default URLs
@@ -460,6 +509,25 @@ dotnet ef database update --project Backend/src/starterProject/Persistence/
 | Dependency Injection | MS.DI | Service registration classes |
 | Business Rules | BaseBusinessRules | Feature-specific rule classes |
 
+## Important Notes
+
+### Swagger JWT Authentication (Microsoft.OpenApi 2.x)
+
+Swashbuckle 10.x + Microsoft.OpenApi 2.x kullanıldığında `AddSecurityRequirement` için delegate syntax gereklidir:
+
+```csharp
+opt.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+{
+    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+});
+```
+
+> **Not:** Eski syntax `[{}]` (boş) olarak serialize eder ve Swagger UI Authorization header göndermez.
+
+### Token Expiration
+
+JWT access token süresi 8 saat (480 dakika) olarak ayarlanmıştır.
+
 ## Context7 Documentation References
 
 For up-to-date documentation on key libraries:
@@ -469,4 +537,4 @@ For up-to-date documentation on key libraries:
 - **FluentValidation**: `/fluentvalidation/fluentvalidation` - Validation rules, integration
 
 ---
-*Auto-generated with /index --ultrathink --seq --c7 command*
+*Updated: 2025-12-18 | Auto-generated with /index --ultrathink --seq --c7 command*
