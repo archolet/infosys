@@ -15,6 +15,7 @@ using InfoSystem.Core.Security.WebApi.Swagger.Extensions;
 using Persistence;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using WebAPI;
+using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +56,26 @@ builder
         };
     });
 
-builder.Services.AddDistributedMemoryCache();
+// Redis Configuration
+const string redisConfigurationSection = "ConnectionStrings:Redis";
+string? redisConnectionString = builder.Configuration.GetSection(redisConfigurationSection).Value;
+
+if (!string.IsNullOrEmpty(redisConnectionString))
+{
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = redisConnectionString;
+        options.InstanceName = "InfoSYS_";
+    });
+
+    // Add IConnectionMultiplexer for advanced cache operations
+    builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+        ConnectionMultiplexer.Connect(redisConnectionString));
+}
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+}
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(opt =>
