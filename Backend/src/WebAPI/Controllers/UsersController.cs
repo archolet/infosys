@@ -2,8 +2,10 @@
 using Application.Features.Users.Commands.Delete;
 using Application.Features.Users.Commands.Update;
 using Application.Features.Users.Commands.UpdateFromAuth;
+using Application.Features.Users.Queries.Export;
 using Application.Features.Users.Queries.GetById;
 using Application.Features.Users.Queries.GetList;
+using Core.CrossCuttingConcerns.FileTransfer.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using InfoSystem.Core.Application.Requests;
 using InfoSystem.Core.Application.Responses;
@@ -35,6 +37,19 @@ public class UsersController : BaseController
         GetListUserQuery getListUserQuery = new() { PageRequest = pageRequest };
         GetListResponse<GetListUserListItemDto> result = await Mediator.Send(getListUserQuery);
         return Ok(result);
+    }
+
+    [HttpGet("Export")]
+    public async Task<IActionResult> Export([FromQuery] string type)
+    {
+        if (!Enum.TryParse<FileTransferType>(type, true, out var exportType))
+        {
+             return BadRequest("Invalid export type. Supported types: Excel, Csv, Pdf, Word, Markdown");
+        }
+
+        var query = new ExportUsersQuery { ExportType = exportType };
+        ExportedUsersResponse result = await Mediator.Send(query);
+        return File(result.FileContent, result.ContentType, result.FileName);
     }
 
     [HttpPost]
