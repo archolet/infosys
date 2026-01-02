@@ -1,19 +1,21 @@
-﻿using Nest;
+using Elastic.Clients.Elasticsearch;
 
 namespace InfoSystem.Core.ElasticSearch.Models;
 
-public class ElasticSearchInsertManyModel : ElasticSearchModel
+public class ElasticSearchInsertManyModel
 {
+    public string IndexName { get; set; }
     public object[] Items { get; set; }
 
-    public ElasticSearchInsertManyModel(object[] items)
+    public ElasticSearchInsertManyModel()
     {
-        Items = items;
+        IndexName = string.Empty;
+        Items = Array.Empty<object>();
     }
 
-    public ElasticSearchInsertManyModel(Id elasticId, string indexName, object[] items)
-        : base(elasticId, indexName)
+    public ElasticSearchInsertManyModel(string indexName, object[] items)
     {
+        IndexName = indexName;
         Items = items;
     }
 }

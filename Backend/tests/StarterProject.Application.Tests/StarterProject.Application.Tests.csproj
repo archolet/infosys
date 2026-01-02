@@ -23,5 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Application\Application.csproj" />
     <ProjectReference Include="..\..\Core\src\Testing\Core.Test\Core.Test.csproj" />
+    <ProjectReference Include="..\..\Core\src\Integration\Core.ElasticSearch\Core.ElasticSearch.csproj" />
   </ItemGroup>
 </Project>

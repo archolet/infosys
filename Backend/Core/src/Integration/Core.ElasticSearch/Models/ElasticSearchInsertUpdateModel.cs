@@ -1,19 +1,24 @@
-﻿using Nest;
+using Elastic.Clients.Elasticsearch;
 
 namespace InfoSystem.Core.ElasticSearch.Models;
 
-public class ElasticSearchInsertUpdateModel : ElasticSearchModel
+public class ElasticSearchInsertUpdateModel
 {
+    public Id ElasticId { get; set; }
+    public string IndexName { get; set; }
     public object Item { get; set; }
 
-    public ElasticSearchInsertUpdateModel(object item)
+    public ElasticSearchInsertUpdateModel()
     {
-        Item = item;
+        ElasticId = null!;
+        IndexName = string.Empty;
+        Item = null!;
     }
 
     public ElasticSearchInsertUpdateModel(Id elasticId, string indexName, object item)
-        : base(elasticId, indexName)
     {
+        ElasticId = elasticId;
+        IndexName = indexName;
         Item = item;
     }
 }
