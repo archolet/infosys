@@ -21,6 +21,8 @@
     <ProjectReference Include="../../Core/src/Localization/Core.Localization.Resource.Yaml.DependencyInjection/Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
     <ProjectReference Include="../../Core/src/Integration/Core.ElasticSearch/Core.ElasticSearch.csproj" />
     <ProjectReference Include="../../Core/src/Security/Core.Security.DependencyInjection/Core.Security.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\Core\src\CrossCuttingConcerns\FileTransfer\Core.CrossCuttingConcerns.FileTransfer\Core.CrossCuttingConcerns.FileTransfer.csproj" />
+    <ProjectReference Include="..\..\Core\src\CrossCuttingConcerns\FileTransfer\Core.CrossCuttingConcerns.FileTransfer.Abstraction\Core.CrossCuttingConcerns.FileTransfer.Abstraction.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
