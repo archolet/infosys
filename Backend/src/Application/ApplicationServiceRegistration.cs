@@ -20,6 +20,7 @@ using InfoSystem.Core.Mailing;
 using InfoSystem.Core.Mailing.MailKit;
 using InfoSystem.Core.Security.DependencyInjection;
 using InfoSystem.Core.Security.JWT;
+using Core.CrossCuttingConcerns.FileTransfer;
 
 namespace Application;
 
@@ -58,6 +59,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IUserService, UserManager>();
 
         services.AddYamlResourceLocalization();
+
+        services.AddFileTransferServices();
 
         services.AddSecurityServices<Guid, int, Guid>(tokenOptions);
 

@@ -94,6 +94,7 @@ public class LoginTests
     {
         _loginCommand.UserForLoginDto = new() { Email = "example@kodlama.io", Password = "123456" };
         LoggedResponse result = await _loginCommandHandler.Handle(_loginCommand, CancellationToken.None);
+        Assert.NotNull(result.AccessToken);
         Assert.NotNull(result.AccessToken.Token);
     }
 
@@ -102,7 +103,9 @@ public class LoginTests
     {
         _loginCommand.UserForLoginDto = new() { Email = "example@kodlama.io", Password = "123456" };
         LoggedResponse result = await _loginCommandHandler.Handle(_loginCommand, CancellationToken.None);
-        TokenOptions? tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
+        TokenOptions tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptions>()
+            ?? throw new InvalidOperationException("TokenOptions not found in configuration");
+        Assert.NotNull(result.AccessToken);
         bool tokenExpiresInTime =
             DateTime.Now.AddMinutes(tokenOptions.AccessTokenExpiration + 1) > result.AccessToken.ExpirationDate;
         Assert.True(tokenExpiresInTime, "Access token expiration time is invalid.");

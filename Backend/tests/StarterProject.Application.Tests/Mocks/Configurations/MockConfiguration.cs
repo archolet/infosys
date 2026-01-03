@@ -6,7 +6,7 @@ public static class MockConfiguration
 {
     public static IConfiguration GetConfigurationMock()
     {
-        var mockConfiguration = new Dictionary<string, string>
+        var mockConfiguration = new Dictionary<string, string?>
         {
             { "TokenOptions:Audience", "Kodlamaio Users" },
             { "TokenOptions:Issuer", "Kodlamaio" },

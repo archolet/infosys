@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "CorePackages.sln",
+    "projects": [
+      "src\\Foundation\\Core.Application\\Core.Application.csproj",
+      "src\\Foundation\\Core.Persistence\\Core.Persistence.csproj",
+      "src\\Foundation\\Core.Persistence.WebApi\\Core.Persistence.WebApi.csproj",
+      "src\\Foundation\\Core.Persistence.DependencyInjection\\Core.Persistence.DependencyInjection.csproj",
+      "src\\Security\\Core.Security\\Core.Security.csproj",
+      "src\\Security\\Core.Security.DependencyInjection\\Core.Security.DependencyInjection.csproj",
+      "src\\Security\\Core.Security.WebApi.Swagger\\Core.Security.WebApi.Swagger.csproj"
+    ]
+  }
+}

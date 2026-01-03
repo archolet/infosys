@@ -13,8 +13,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
@@ -26,6 +24,7 @@
     <ProjectReference Include="../../Core/src/Localization/Core.Localization.WebApi/Core.Localization.WebApi.csproj" />
     <ProjectReference Include="../../Core/src/Foundation/Core.Persistence.WebApi/Core.Persistence.WebApi.csproj" />
     <ProjectReference Include="../../Core/src/Security/Core.Security.WebApi.Swagger/Core.Security.WebApi.Swagger.csproj" />
+    <ProjectReference Include="../../Core/src/CrossCuttingConcerns/FileTransfer/Core.CrossCuttingConcerns.FileTransfer.Abstraction/Core.CrossCuttingConcerns.FileTransfer.Abstraction.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\Dtos" />

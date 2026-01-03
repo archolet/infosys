@@ -28,8 +28,6 @@ public static class IQueryableDynamicFilterExtensions
 
     public static IQueryable<T> ToDynamic<T>(this IQueryable<T> query, DynamicQuery dynamicQuery)
     {
-        // Test
-        Console.WriteLine(dynamicQuery.Filter.Value);
         if (dynamicQuery.Filter is not null)
             query = Filter(query, dynamicQuery.Filter);
         if (dynamicQuery.Sort is not null && dynamicQuery.Sort.Any())
@@ -43,9 +41,11 @@ public static class IQueryableDynamicFilterExtensions
         var values = new List<object>();
         foreach (var f in filters)
         {
+            if (string.IsNullOrEmpty(f.Value))
+                continue;
+
             if (f.Operator == "in")
             {
-                Console.WriteLine(f.Value);
                 var inValues = f.Value.Split(',').Select(v => v.Trim());
                 values.AddRange(inValues);
             }
@@ -64,8 +64,7 @@ public static class IQueryableDynamicFilterExtensions
         }
 
         string where = Transform(filter, filters);
-        Console.WriteLine(where);
-        if (!string.IsNullOrEmpty(where) && values != null)
+        if (!string.IsNullOrEmpty(where) && values.Count > 0)
             queryable = queryable.Where(where, values.ToArray());
 
         return queryable;

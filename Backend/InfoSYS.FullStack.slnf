@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "InfoSYS.sln",
+    "projects": [
+      "src\\Application\\Application.csproj",
+      "src\\Domain\\Domain.csproj",
+      "src\\Persistence\\Persistence.csproj",
+      "src\\Infrastructure\\Infrastructure.csproj",
+      "src\\WebAPI\\WebAPI.csproj",
+      "tests\\StarterProject.Application.Tests\\StarterProject.Application.Tests.csproj",
+      "..\\Frontend\\InfoSYS.WebUI\\InfoSYS.WebUI.csproj"
+    ]
+  }
+}

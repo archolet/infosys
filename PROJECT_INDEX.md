@@ -1,540 +1,488 @@
-# Project Index
+# PROJECT_INDEX.md
 
-> Updated: 2025-12-18 | Version: 1.1.0 | InfoSYS - .NET 10.0 Clean Architecture Backend with CQRS (PostgreSQL)
+> **Generated:** 2026-01-02 | **Method:** Serena MCP Symbolic Analysis | **Version:** 2.0
+
+## Overview
+
+InfoSYS is a .NET 10.0 Clean Architecture application implementing CQRS pattern with comprehensive cross-cutting concerns. The project provides authentication, user management, and role-based authorization features.
+
+---
 
 ## Project Structure
 
 ```
-Backend/
-├── Core/                                    # InfoSYS Core packages (26 projects, 120 files)
-│   └── src/
-│       ├── Foundation/                      # Temel yapı taşları
-│       │   ├── Core.Application/            # CQRS pipelines, base abstractions (15 files)
-│       │   │   ├── Pipelines/               # MediatR pipeline behaviors
-│       │   │   │   ├── Authorization/       # Role-based auth (ISecuredRequest)
-│       │   │   │   ├── Caching/             # Distributed cache (ICachableRequest)
-│       │   │   │   ├── Logging/             # Request logging (ILoggableRequest)
-│       │   │   │   ├── Performance/         # Performance monitoring (IIntervalRequest)
-│       │   │   │   ├── Transaction/         # Transaction scope (ITransactionalRequest)
-│       │   │   │   └── Validation/          # FluentValidation integration
-│       │   │   ├── Dtos/                    # Base DTOs
-│       │   │   ├── Requests/                # PageRequest
-│       │   │   ├── Responses/               # GetListResponse<T>, IResponse
-│       │   │   └── Rules/                   # BaseBusinessRules
-│       │   │
-│       │   ├── Core.Persistence/            # EF Core repository base (18 files)
-│       │   │   ├── Repositories/            # EfRepositoryBase, Entity<TId>
-│       │   │   ├── Paging/                  # IPaginate<T>, Paginate<T>
-│       │   │   ├── Dynamic/                 # DynamicQuery, Filter, Sort
-│       │   │   └── DbMigrationApplier/      # Auto migration support
-│       │   │
-│       │   └── Core.Persistence.WebApi/     # Persistence middleware
-│       │
-│       ├── Security/                        # Güvenlik
-│       │   ├── Core.Security/               # JWT, Hashing, Auth (21 files)
-│       │   │   ├── JWT/                     # JwtHelper, TokenOptions, AccessToken
-│       │   │   ├── Hashing/                 # HashingHelper (HMACSHA512)
-│       │   │   ├── Encryption/              # SecurityKeyHelper, SigningCredentialsHelper
-│       │   │   ├── OtpAuthenticator/        # OtpNetOtpAuthenticatorHelper
-│       │   │   ├── EmailAuthenticator/      # EmailAuthenticatorHelper
-│       │   │   ├── Entities/                # User, OperationClaim, RefreshToken, etc.
-│       │   │   ├── Extensions/              # ClaimExtensions, ClaimsPrincipalExtensions
-│       │   │   └── Constants/               # GeneralOperationClaims
-│       │   │
-│       │   ├── Core.Security.WebApi.Swagger/# Swagger JWT security
-│       │   └── Core.Security.DependencyInjection/
-│       │
-│       ├── CrossCuttingConcerns/            # Kesişen ilgiler (8 projects)
-│       │   ├── Exception/                   # Exception types
-│       │   │   ├── Core.CrossCuttingConcerns.Exception/    # BusinessException, ValidationException
-│       │   │   └── Core.CrossCuttingConcerns.Exception.WebApi/ # HTTP ProblemDetails, Middleware
-│       │   │
-│       │   └── Logging/                     # Logging infrastructure
-│       │       ├── Core.CrossCuttingConcerns.Logging/           # LogDetail, LogParameter
-│       │       ├── Core.CrossCuttingConcerns.Logging.Abstraction/ # ILogger interface
-│       │       ├── Core.CrossCuttingConcerns.Logging.SeriLog/   # SerilogLoggerServiceBase
-│       │       └── Core.CrossCuttingConcerns.Logging.Serilog.File/ # SerilogFileLogger
-│       │
-│       ├── Communication/                   # İletişim
-│       │   ├── Mailing/                     # E-posta
-│       │   │   ├── Core.Mailing/            # Mail abstractions (4 files)
-│       │   │   └── Core.Mailing.MailKit/    # MailKit implementation
-│       │   ├── Sms/                         # SMS services
-│       │   └── Push/                        # Push notifications
-│       │
-│       ├── Localization/                    # Lokalizasyon (5 projects)
-│       │   ├── Core.Localization.Abstraction/
-│       │   ├── Core.Localization.Resource.Yaml/
-│       │   ├── Core.Localization.Resource.Yaml.DependencyInjection/
-│       │   ├── Core.Localization.Translation/
-│       │   └── Core.Localization.WebApi/
-│       │
-│       ├── Integration/                     # Dış entegrasyonlar
-│       │   └── Core.ElasticSearch/          # NEST Elasticsearch (14 files)
-│       │
-│       ├── Translation/                     # Çeviri (3 projects)
-│       │   ├── Core.Translation.Abstraction/
-│       │   ├── Core.Translation.AmazonTranslate/
-│       │   └── Core.Translation.AmazonTranslate.DependencyInjection/
-│       │
-│       └── Testing/                         # Test
-│           └── Core.Test/                   # Test utilities (4 files)
-│
-├── src/                                     # Main application (119 files, 4,330 LOC)
-│   ├── Domain/                              # Entities (6 entities)
-│   │   └── Entities/
-│   │       ├── User.cs                      # System user entity
-│   │       ├── OperationClaim.cs            # Permission/role entity
-│   │       ├── UserOperationClaim.cs        # User-permission mapping
-│   │       ├── RefreshToken.cs              # JWT refresh token
-│   │       ├── EmailAuthenticator.cs        # Email 2FA configuration
-│   │       └── OtpAuthenticator.cs          # OTP 2FA configuration
-│   │
-│   ├── Application/                         # Business logic (CQRS)
-│   │   ├── Features/                        # Commands (18) & Queries (6)
-│   │   │   ├── Auth/                        # 8 commands, 0 queries
-│   │   │   │   ├── Commands/
-│   │   │   │   │   ├── Login/               # LoginCommand (84 lines)
-│   │   │   │   │   ├── Register/            # RegisterCommand (76 lines)
-│   │   │   │   │   ├── RefreshToken/        # RefreshTokenCommand (74 lines)
-│   │   │   │   │   ├── RevokeToken/         # RevokeTokenCommand
-│   │   │   │   │   ├── EnableEmailAuthenticator/
-│   │   │   │   │   ├── EnableOtpAuthenticator/
-│   │   │   │   │   ├── VerifyEmailAuthenticator/
-│   │   │   │   │   └── VerifyOtpAuthenticator/
-│   │   │   │   └── Rules/                   # AuthBusinessRules (89 lines)
-│   │   │   │
-│   │   │   ├── Users/                       # 4 commands, 2 queries
-│   │   │   │   ├── Commands/                # Create, Update, Delete, UpdateFromAuth
-│   │   │   │   ├── Queries/                 # GetById, GetList
-│   │   │   │   └── Rules/                   # UserBusinessRules
-│   │   │   │
-│   │   │   ├── OperationClaims/             # 3 commands, 2 queries
-│   │   │   └── UserOperationClaims/         # 3 commands, 2 queries
-│   │   │
-│   │   └── Services/                        # Application services
-│   │       ├── Repositories/                # 6 repository interfaces
-│   │       ├── AuthService/                 # AuthManager (114 lines)
-│   │       ├── UsersService/                # UserManager (81 lines)
-│   │       ├── AuthenticatorService/        # AuthenticatorManager (127 lines)
-│   │       ├── OperationClaims/             # OperationClaimManager (90 lines)
-│   │       └── UserOperationClaims/         # UserOperationClaimManager (101 lines)
-│   │
-│   ├── Persistence/                         # Data access
-│   │   ├── Contexts/                        # BaseDbContext
-│   │   ├── Repositories/                    # 6 repository implementations
-│   │   └── EntityConfigurations/            # 6 EF configurations
-│   │
-│   ├── Infrastructure/                      # External services
-│   │   └── Adapters/
-│   │
-│   └── WebAPI/                              # API layer
-│       ├── Controllers/                     # 5 controllers
-│       │   ├── AuthController.cs            # 122 lines, 8 endpoints
-│       │   ├── UsersController.cs           # 68 lines, 7 endpoints
-│       │   ├── OperationClaimsController.cs # 51 lines, 5 endpoints
-│       │   ├── UserOperationClaimsController.cs # 51 lines, 5 endpoints
-│       │   └── BaseController.cs            # Base controller with Mediator
-│       └── Program.cs                       # 116 lines, application bootstrap
-│
-└── tests/                                   # Test projects (20 files, 710 LOC)
-    └── StarterProject.Application.Tests/
-        ├── Features/                        # Feature tests
-        │   ├── Auth/Commands/Login/         # LoginTests (146 lines)
-        │   └── Users/                       # User CRUD tests
-        └── Mocks/                           # Mock repositories and fake data
+infosys/
+├── Backend/
+│   ├── Core/                         # 26 reusable Core packages
+│   │   └── src/
+│   │       ├── Foundation/           # Core.Application, Core.Persistence
+│   │       ├── Security/             # JWT, Hashing, Auth entities
+│   │       ├── CrossCuttingConcerns/ # Exception, Logging (Serilog)
+│   │       ├── Communication/        # Mailing (MailKit), SMS, Push
+│   │       ├── Localization/         # YAML-based localization
+│   │       ├── Integration/          # ElasticSearch
+│   │       ├── Translation/          # Amazon Translate
+│   │       └── Testing/              # Test utilities
+│   ├── src/
+│   │   ├── Domain/                   # Entities (6)
+│   │   ├── Application/              # Features, Services, CQRS
+│   │   ├── Persistence/              # EF Core, Repositories
+│   │   ├── Infrastructure/           # External services
+│   │   └── WebAPI/                   # Controllers, Program.cs
+│   └── tests/
+│       └── StarterProject.Application.Tests/
+└── Makefile                          # Build automation
 ```
+
+---
 
 ## Entry Points
 
-| File | Lines | Description |
-|------|-------|-------------|
-| `WebAPI/Program.cs` | 116 | Application bootstrap, DI, JWT config, Swagger, middleware |
-| `Application/ApplicationServiceRegistration.cs` | 82 | MediatR, AutoMapper, pipeline behaviors, services |
-| `Persistence/PersistenceServiceRegistration.cs` | 27 | DbContext, repositories registration |
-| `Infrastructure/InfrastructureServiceRegistration.cs` | - | External services |
+| Entry Point | Path | Description |
+|-------------|------|-------------|
+| **API** | `Backend/src/WebAPI/Program.cs` | ASP.NET Core Web API (http://localhost:5278) |
+| **Tests** | `Backend/tests/StarterProject.Application.Tests/` | xUnit test project |
 
-## Core Modules
+---
 
-### Core.Application - Pipeline Behaviors
+## Tech Stack
 
-MediatR pipeline behaviors for cross-cutting concerns. Based on [MediatR documentation](https://github.com/jbogard/mediatr).
+### Core Packages
 
-#### AuthorizationBehavior (Line 10-44)
-```csharp
-public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ISecuredRequest
+| Package | Version | Purpose |
+|---------|---------|---------|
+| MediatR | 14.0.0 | CQRS mediator pattern |
+| FluentValidation | 12.1.1 | Request validation |
+| AutoMapper | 16.0.0 | Object mapping |
+| Microsoft.EntityFrameworkCore | 10.0.1 | ORM |
+| Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.0 | PostgreSQL provider |
+| System.IdentityModel.Tokens.Jwt | 8.15.0 | JWT token handling |
+| Microsoft.AspNetCore.Authentication.JwtBearer | 10.0.1 | JWT authentication |
+| Serilog | 4.3.0 | Structured logging |
+| MailKit | 4.14.1 | Email sending |
+| Swashbuckle.AspNetCore | 10.0.1 | Swagger/OpenAPI |
+
+### Testing Packages
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| xunit.v3 | 3.2.0 | Test framework |
+| Moq | 4.20.72 | Mocking framework |
+| coverlet.collector | 6.0.4 | Code coverage |
+
+### Integration Packages
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| NEST | 7.17.5 | ElasticSearch client |
+| AWSSDK.Translate | 4.0.1.9 | Amazon Translate |
+| CloudinaryDotNet | 1.27.9 | Image hosting |
+| Microsoft.Extensions.Caching.StackExchangeRedis | 10.0.1 | Redis caching |
+
+---
+
+## Core Modules (26 Projects)
+
+### Foundation
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Application | `Core/src/Foundation/Core.Application/` | Pipeline behaviors, base rules, DTOs |
+| Core.Persistence | `Core/src/Foundation/Core.Persistence/` | EfRepositoryBase, Entity base, Paging |
+| Core.Persistence.WebApi | `Core/src/Foundation/Core.Persistence.WebApi/` | HTTP context extensions |
+| Core.Persistence.DependencyInjection | `Core/src/Foundation/Core.Persistence.DependencyInjection/` | DI registration |
+
+### Security
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Security | `Core/src/Security/Core.Security/` | JWT, Hashing, Encryption, Auth entities |
+| Core.Security.DependencyInjection | `Core/src/Security/Core.Security.DependencyInjection/` | Security DI |
+| Core.Security.WebApi.Swagger | `Core/src/Security/Core.Security.WebApi.Swagger/` | Swagger JWT setup |
+
+### Cross-Cutting Concerns
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.CrossCuttingConcerns.Exception | `Core/src/CrossCuttingConcerns/Exception/` | Exception types |
+| Core.CrossCuttingConcerns.Exception.WebApi | `Core/src/CrossCuttingConcerns/Exception/Core.CrossCuttingConcerns.Exception.WebAPI/` | Exception middleware |
+| Core.CrossCuttingConcerns.Logging | `Core/src/CrossCuttingConcerns/Logging/` | Log DTOs |
+| Core.CrossCuttingConcerns.Logging.Serilog | `Core/src/CrossCuttingConcerns/Logging/Core.CrossCuttingConcerns.Logging.SeriLog/` | Serilog implementation |
+| Core.CrossCuttingConcerns.Logging.Serilog.File | `Core/src/CrossCuttingConcerns/Logging/Core.CrossCuttingConcerns.Logging.Serilog.File/` | File sink |
+
+### Communication
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Mailing | `Core/src/Communication/Mailing/Core.Mailing/` | Mail abstractions |
+| Core.Mailing.MailKit | `Core/src/Communication/Mailing/Core.Mailing.MailKit/` | MailKit implementation |
+
+### Localization
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Localization.Abstraction | `Core/src/Localization/Core.Localization.Abstraction/` | ILocalizationService |
+| Core.Localization.Resource.Yaml | `Core/src/Localization/Core.Localization.Resource.Yaml/` | YAML resource reader |
+| Core.Localization.WebApi | `Core/src/Localization/Core.Localization.WebApi/` | Accept-Language middleware |
+
+### Integration
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.ElasticSearch | `Core/src/Integration/Core.ElasticSearch/` | ElasticSearch manager |
+
+### Translation
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Translation.Abstraction | `Core/src/Translation/Core.Translation.Abstraction/` | ITranslationService |
+| Core.Translation.AmazonTranslate | `Core/src/Translation/Core.Translation.AmazonTranslate/` | Amazon Translate impl |
+
+### Testing
+
+| Project | Path | Description |
+|---------|------|-------------|
+| Core.Test | `Core/src/Testing/Core.Test/` | BaseMockRepository, FakeData |
+
+---
+
+## Pipeline Behaviors
+
+MediatR pipeline behaviors for cross-cutting concerns:
+
+| Behavior | File | Interface | Purpose |
+|----------|------|-----------|---------|
+| AuthorizationBehavior | `Core.Application/Pipelines/Authorization/AuthorizationBehavior.cs` | `ISecuredRequest` | Role-based authorization |
+| CachingBehavior | `Core.Application/Pipelines/Caching/CachingBehavior.cs` | `ICachableRequest` | Response caching |
+| CacheRemovingBehavior | `Core.Application/Pipelines/Caching/CacheRemovingBehavior.cs` | `ICacheRemoverRequest` | Cache invalidation |
+| LoggingBehavior | `Core.Application/Pipelines/Logging/LoggingBehavior.cs` | `ILoggableRequest` | Request/response logging |
+| RequestValidationBehavior | `Core.Application/Pipelines/Validation/RequestValidationBehavior.cs` | - | FluentValidation execution |
+| TransactionScopeBehavior | `Core.Application/Pipelines/Transaction/TransactionScopeBehavior.cs` | `ITransactionalRequest` | Transaction scope |
+| PerformanceBehavior | `Core.Application/Pipelines/Performance/PerformanceBehavior.cs` | - | Performance monitoring |
+
+---
+
+## Entity Schema
+
+### Domain Entities
+
+| Entity | Base Class | Key Type | File |
+|--------|------------|----------|------|
+| User | `Core.Security.Entities.User<Guid>` | `Guid` | `Domain/Entities/User.cs` |
+| OperationClaim | `Core.Security.Entities.OperationClaim<int>` | `int` | `Domain/Entities/OperationClaim.cs` |
+| UserOperationClaim | `Core.Security.Entities.UserOperationClaim<Guid,Guid,int>` | `Guid` | `Domain/Entities/UserOperationClaim.cs` |
+| RefreshToken | `Core.Security.Entities.RefreshToken<Guid,Guid>` | `Guid` | `Domain/Entities/RefreshToken.cs` |
+| EmailAuthenticator | `Core.Security.Entities.EmailAuthenticator<Guid>` | `Guid` | `Domain/Entities/EmailAuthenticator.cs` |
+| OtpAuthenticator | `Core.Security.Entities.OtpAuthenticator<Guid>` | `Guid` | `Domain/Entities/OtpAuthenticator.cs` |
+
+### Entity Relationships
+
 ```
-- `Handle(request, next, cancellationToken)` → Validates user claims and roles
-- Throws `AuthorizationException` for unauthorized access
-- Admin role bypasses all role checks
-
-#### CachingBehavior (Line 10-118)
-```csharp
-public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ICachableRequest
-```
-- `Handle(request, next, cancellationToken)` → Cache lookup/store with IDistributedCache
-- `getResponseAndAddToCache(...)` → Store response with sliding expiration (Line 51-70)
-- `addCacheKeyToGroup(...)` → Group cache keys for bulk invalidation (Line 72-117)
-
-#### CacheRemovingBehavior
-```csharp
-public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ICacheRemoverRequest
-```
-- Invalidates cache groups after commands execute
-
-#### LoggingBehavior
-```csharp
-public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ILoggableRequest
-```
-- Logs request/response details via Serilog
-
-#### RequestValidationBehavior
-```csharp
-public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
-```
-- Runs FluentValidation validators before handler
-- Throws `ValidationException` on failures
-
-#### TransactionScopeBehavior
-```csharp
-public class TransactionScopeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ITransactionalRequest
-```
-- Wraps handler in TransactionScope
-
-#### PerformanceBehavior
-```csharp
-public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, IIntervalRequest
-```
-- Monitors request execution time
-
-### Core.Persistence - Repository Pattern
-
-Based on [Entity Framework Core documentation](https://learn.microsoft.com/en-us/ef/core/).
-
-#### EfRepositoryBase<TEntity, TEntityId, TContext> (464 lines)
-Generic repository with soft delete cascade support.
-
-```csharp
-public class EfRepositoryBase<TEntity, TEntityId, TContext>
-    : IAsyncRepository<TEntity, TEntityId>, IRepository<TEntity, TEntityId>
-    where TEntity : Entity<TEntityId>
-    where TContext : DbContext
+User (1) ──────────── (*) UserOperationClaim (*) ──────────── (1) OperationClaim
+  │
+  ├──── (*) RefreshToken
+  ├──── (*) EmailAuthenticator
+  └──── (*) OtpAuthenticator
 ```
 
-**Async Methods:**
-| Method | Line | Signature |
-|--------|------|-----------|
-| `Query` | 25 | `IQueryable<TEntity> Query()` |
-| `AddAsync` | 35 | `Task<TEntity> AddAsync(TEntity entity, CancellationToken)` |
-| `AddRangeAsync` | 43 | `Task<ICollection<TEntity>> AddRangeAsync(ICollection<TEntity>, CancellationToken)` |
-| `UpdateAsync` | 60 | `Task<TEntity> UpdateAsync(TEntity entity, CancellationToken)` |
-| `UpdateRangeAsync` | 68 | `Task<ICollection<TEntity>> UpdateRangeAsync(ICollection<TEntity>, CancellationToken)` |
-| `DeleteAsync` | 80 | `Task<TEntity> DeleteAsync(TEntity entity, bool permanent, CancellationToken)` |
-| `DeleteRangeAsync` | 87 | `Task<ICollection<TEntity>> DeleteRangeAsync(ICollection<TEntity>, bool, CancellationToken)` |
-| `GetAsync` | 123 | `Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>>, include?, withDeleted, enableTracking, CancellationToken)` |
-| `GetListAsync` | 98 | `Task<IPaginate<TEntity>> GetListAsync(predicate?, orderBy?, include?, index, size, withDeleted, enableTracking, CancellationToken)` |
-| `GetListByDynamicAsync` | 141 | `Task<IPaginate<TEntity>> GetListByDynamicAsync(DynamicQuery, predicate?, include?, index, size, ...)` |
-| `AnyAsync` | 164 | `Task<bool> AnyAsync(predicate?, include?, withDeleted, CancellationToken)` |
+---
 
-**Soft Delete Support:**
-| Method | Line | Description |
-|--------|------|-------------|
-| `SetEntityAsDeleted` | 304 | Marks entity and cascades to related entities |
-| `CheckHasEntityHaveOneToOneRelation` | 347 | Prevents soft delete on 1:1 relations |
-| `setEntityAsSoftDeleted` | 380 | Recursive cascade implementation |
+## API Endpoints
 
-### Core.Security - Authentication
+### AuthController (`/api/Auth`)
 
-Based on JWT bearer tokens and HMACSHA512 hashing.
+| Method | Route | Handler | Auth |
+|--------|-------|---------|------|
+| POST | `/Login` | `LoginCommand` | - |
+| POST | `/Register` | `RegisterCommand` | - |
+| GET | `/RefreshToken` | `RefreshTokenCommand` | - |
+| PUT | `/RevokeToken` | `RevokeTokenCommand` | ✓ |
+| GET | `/EnableEmailAuthenticator` | `EnableEmailAuthenticatorCommand` | ✓ |
+| GET | `/EnableOtpAuthenticator` | `EnableOtpAuthenticatorCommand` | ✓ |
+| GET | `/VerifyEmailAuthenticator` | `VerifyEmailAuthenticatorCommand` | - |
+| POST | `/VerifyOtpAuthenticator` | `VerifyOtpAuthenticatorCommand` | ✓ |
 
-#### JwtHelper (85 lines)
-```csharp
-public class JwtHelper : ITokenHelper
-```
-- `CreateToken(User, IList<OperationClaim>)` → Creates JWT access token
-- Uses `SecurityKeyHelper.CreateSecurityKey()` for signing
-- Configurable via `TokenOptions` (Issuer, Audience, Expiration)
+### UsersController (`/api/Users`)
 
-#### HashingHelper
-```csharp
-public static class HashingHelper
-```
-- `CreatePasswordHash(password, out passwordHash, out passwordSalt)` → HMACSHA512
-- `VerifyPasswordHash(password, passwordHash, passwordSalt)` → Verification
+| Method | Route | Handler | Auth |
+|--------|-------|---------|------|
+| GET | `/{Id}` | `GetByIdUserQuery` | ✓ |
+| GET | `/GetFromAuth` | `GetByIdUserQuery` (from token) | ✓ |
+| GET | `/` | `GetListUserQuery` | ✓ |
+| POST | `/` | `CreateUserCommand` | ✓ |
+| PUT | `/` | `UpdateUserCommand` | ✓ |
+| PUT | `/FromAuth` | `UpdateUserFromAuthCommand` | ✓ |
+| DELETE | `/` | `DeleteUserCommand` | ✓ |
 
-## Configuration
+### OperationClaimsController (`/api/OperationClaims`)
 
-| File | Purpose |
-|------|---------|
-| `appsettings.json` | Base configuration |
-| `appsettings.Development.json` | Development overrides |
-| `appsettings.Staging.json` | Staging overrides |
-| `launchSettings.json` | Visual Studio launch profiles |
+| Method | Route | Handler | Auth |
+|--------|-------|---------|------|
+| GET | `/{Id}` | `GetByIdOperationClaimQuery` | ✓ |
+| GET | `/` | `GetListOperationClaimQuery` | ✓ |
+| POST | `/` | `CreateOperationClaimCommand` | ✓ |
+| PUT | `/` | `UpdateOperationClaimCommand` | ✓ |
+| DELETE | `/` | `DeleteOperationClaimCommand` | ✓ |
 
-### Key Configuration Sections
+### UserOperationClaimsController (`/api/UserOperationClaims`)
+
+| Method | Route | Handler | Auth |
+|--------|-------|---------|------|
+| GET | `/{Id}` | `GetByIdUserOperationClaimQuery` | ✓ |
+| GET | `/` | `GetListUserOperationClaimQuery` | ✓ |
+| POST | `/` | `CreateUserOperationClaimCommand` | ✓ |
+| PUT | `/` | `UpdateUserOperationClaimCommand` | ✓ |
+| DELETE | `/` | `DeleteUserOperationClaimCommand` | ✓ |
+
+**Total: 25 endpoints** across 4 controllers
+
+---
+
+## CQRS Operations
+
+### Commands (18)
+
+| Feature | Command | File | Interfaces |
+|---------|---------|------|------------|
+| **Auth** | LoginCommand | `Features/Auth/Commands/Login/LoginCommand.cs` | IRequest |
+| | RegisterCommand | `Features/Auth/Commands/Register/RegisterCommand.cs` | IRequest |
+| | RefreshTokenCommand | `Features/Auth/Commands/RefreshToken/RefreshTokenCommand.cs` | IRequest |
+| | RevokeTokenCommand | `Features/Auth/Commands/RevokeToken/RevokeTokenCommand.cs` | IRequest, ISecuredRequest |
+| | EnableEmailAuthenticatorCommand | `Features/Auth/Commands/EnableEmailAuthenticator/` | IRequest, ISecuredRequest |
+| | EnableOtpAuthenticatorCommand | `Features/Auth/Commands/EnableOtpAuthenticator/` | IRequest, ISecuredRequest |
+| | VerifyEmailAuthenticatorCommand | `Features/Auth/Commands/VerifyEmailAuthenticator/` | IRequest |
+| | VerifyOtpAuthenticatorCommand | `Features/Auth/Commands/VerifyOtpAuthenticator/` | IRequest, ISecuredRequest |
+| **Users** | CreateUserCommand | `Features/Users/Commands/Create/CreateUserCommand.cs` | IRequest, ISecuredRequest |
+| | UpdateUserCommand | `Features/Users/Commands/Update/UpdateUserCommand.cs` | IRequest, ISecuredRequest |
+| | UpdateUserFromAuthCommand | `Features/Users/Commands/UpdateFromAuth/` | IRequest |
+| | DeleteUserCommand | `Features/Users/Commands/Delete/DeleteUserCommand.cs` | IRequest, ISecuredRequest |
+| **OperationClaims** | CreateOperationClaimCommand | `Features/OperationClaims/Commands/Create/` | IRequest, ISecuredRequest |
+| | UpdateOperationClaimCommand | `Features/OperationClaims/Commands/Update/` | IRequest, ISecuredRequest |
+| | DeleteOperationClaimCommand | `Features/OperationClaims/Commands/Delete/` | IRequest, ISecuredRequest |
+| **UserOperationClaims** | CreateUserOperationClaimCommand | `Features/UserOperationClaims/Commands/Create/` | IRequest, ISecuredRequest |
+| | UpdateUserOperationClaimCommand | `Features/UserOperationClaims/Commands/Update/` | IRequest, ISecuredRequest |
+| | DeleteUserOperationClaimCommand | `Features/UserOperationClaims/Commands/Delete/` | IRequest, ISecuredRequest |
+
+### Queries (6)
+
+| Feature | Query | File | Interfaces |
+|---------|-------|------|------------|
+| **Users** | GetByIdUserQuery | `Features/Users/Queries/GetById/GetByIdUserQuery.cs` | IRequest, ISecuredRequest |
+| | GetListUserQuery | `Features/Users/Queries/GetList/GetListUserQuery.cs` | IRequest, ISecuredRequest |
+| **OperationClaims** | GetByIdOperationClaimQuery | `Features/OperationClaims/Queries/GetById/` | IRequest, ISecuredRequest |
+| | GetListOperationClaimQuery | `Features/OperationClaims/Queries/GetList/` | IRequest, ISecuredRequest |
+| **UserOperationClaims** | GetByIdUserOperationClaimQuery | `Features/UserOperationClaims/Queries/GetById/` | IRequest, ISecuredRequest |
+| | GetListUserOperationClaimQuery | `Features/UserOperationClaims/Queries/GetList/` | IRequest, ISecuredRequest |
+
+---
+
+## Business Rules
+
+| Class | File | Purpose |
+|-------|------|---------|
+| AuthBusinessRules | `Features/Auth/Rules/AuthBusinessRules.cs` | Login validation, token checks |
+| UserBusinessRules | `Features/Users/Rules/UserBusinessRules.cs` | Email uniqueness, user existence |
+| OperationClaimBusinessRules | `Features/OperationClaims/Rules/OperationClaimBusinessRules.cs` | Claim validation |
+| UserOperationClaimBusinessRules | `Features/UserOperationClaims/Rules/UserOperationClaimBusinessRules.cs` | Assignment validation |
+
+---
+
+## Repository Interfaces
+
+| Interface | Entity | Key Type | File |
+|-----------|--------|----------|------|
+| IUserRepository | User | Guid | `Services/Repositories/IUserRepository.cs` |
+| IOperationClaimRepository | OperationClaim | int | `Services/Repositories/IOperationClaimRepository.cs` |
+| IUserOperationClaimRepository | UserOperationClaim | Guid | `Services/Repositories/IUserOperationClaimRepository.cs` |
+| IRefreshTokenRepository | RefreshToken | Guid | `Services/Repositories/IRefreshTokenRepository.cs` |
+| IEmailAuthenticatorRepository | EmailAuthenticator | Guid | `Services/Repositories/IEmailAuthenticatorRepository.cs` |
+| IOtpAuthenticatorRepository | OtpAuthenticator | Guid | `Services/Repositories/IOtpAuthenticatorRepository.cs` |
+
+---
+
+## Database Configuration
+
+### PostgreSQL Connection
 
 ```json
 {
   "ConnectionStrings": {
     "BaseDb": "Host=localhost;Port=5432;Database=InfoSYSDb;Username=postgres;Password=postgres"
-  },
-  "TokenOptions": {
-    "AccessTokenExpiration": 480,
-    "Audience": "starterProject@kodlama.io",
-    "Issuer": "nArchitecture@kodlama.io",
-    "RefreshTokenTTL": 2,
-    "SecurityKey": "StrongAndSecretKey..."
-  },
-  "CacheSettings": {
-    "SlidingExpiration": 2
-  },
-  "MailSettings": {
-    "Server": "127.0.0.1",
-    "Port": 25,
-    "SenderEmail": "infosys@kodlama.io"
-  },
-  "ElasticSearchConfig": {
-    "ConnectionString": "http://localhost:9200"
   }
 }
 ```
 
-### Database (PostgreSQL)
+### Docker Setup
 
 ```bash
-# Docker ile PostgreSQL başlat
 docker run --name infosys-postgres \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=InfoSYSDb \
-  -p 5432:5432 -d postgres:16
+  -p 5432:5432 \
+  -d postgres:16
 ```
 
-## Key Dependencies
+### EF Core Migrations
 
-### Runtime
+```bash
+# Add migration
+dotnet ef migrations add MigrationName \
+  --project Backend/src/Persistence/ \
+  --startup-project Backend/src/WebAPI/
 
-| Package | Version | Purpose | Docs |
-|---------|---------|---------|------|
-| Microsoft.EntityFrameworkCore | 10.0.1 | ORM | [Context7](/dotnet/entityframework.docs) |
-| MediatR | 14.0.0 | CQRS mediator | [Context7](/jbogard/mediatr) |
-| AutoMapper | 16.0.0 | Object mapping | |
-| FluentValidation | 12.1.1 | Request validation | [Context7](/fluentvalidation/fluentvalidation) |
-| Serilog | 4.3.0 | Structured logging | |
-| MailKit | 4.14.1 | Email sending | |
-| MimeKit | 4.14.0 | MIME messages | |
-| NEST | 7.17.5 | Elasticsearch client | |
-| Microsoft.IdentityModel.Tokens | 8.15.0 | JWT handling | |
-| System.IdentityModel.Tokens.Jwt | 8.15.0 | JWT creation | |
-| Otp.NET | 1.4.1 | OTP generation | |
-| Swashbuckle.AspNetCore | 10.0.1 | Swagger/OpenAPI | |
-| Microsoft.AspNetCore.Authentication.JwtBearer | 10.0.1 | JWT auth middleware | |
-| Microsoft.Extensions.Caching.StackExchangeRedis | 10.0.1 | Redis caching | |
-| Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.2 | PostgreSQL provider | |
-| System.Linq.Dynamic.Core | 1.7.1 | Dynamic LINQ | |
-
-### Development
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| xunit.v3 | 3.2.0 | Unit testing |
-| Moq | 4.20.72 | Mocking framework |
-| coverlet.collector | 6.0.4 | Code coverage |
-| Microsoft.NET.Test.Sdk | 18.0.1 | Test SDK |
-| Microsoft.EntityFrameworkCore.Tools | 10.0.1 | EF migrations |
-
-## API Endpoints
-
-### AuthController (`/api/Auth`) - 8 endpoints
-
-| Method | Route | Handler | Description |
-|--------|-------|---------|-------------|
-| POST | /Login | `LoginCommand` | Authenticate user, return JWT + refresh token |
-| POST | /Register | `RegisterCommand` | Register new user |
-| GET | /RefreshToken | `RefreshTokenCommand` | Refresh JWT using cookie |
-| PUT | /RevokeToken | `RevokeTokenCommand` | Revoke refresh token |
-| GET | /EnableEmailAuthenticator | `EnableEmailAuthenticatorCommand` | Enable email 2FA |
-| GET | /EnableOtpAuthenticator | `EnableOtpAuthenticatorCommand` | Enable OTP 2FA |
-| GET | /VerifyEmailAuthenticator | `VerifyEmailAuthenticatorCommand` | Verify email 2FA code |
-| POST | /VerifyOtpAuthenticator | `VerifyOtpAuthenticatorCommand` | Verify OTP code |
-
-### UsersController (`/api/Users`) - 7 endpoints
-
-| Method | Route | Handler | Description |
-|--------|-------|---------|-------------|
-| GET | /{Id} | `GetByIdUserQuery` | Get user by ID |
-| GET | /GetFromAuth | `GetByIdUserQuery` | Get current authenticated user |
-| GET | / | `GetListUserQuery` | List users (paginated) |
-| POST | / | `CreateUserCommand` | Create new user |
-| PUT | / | `UpdateUserCommand` | Update user |
-| PUT | /FromAuth | `UpdateUserFromAuthCommand` | Update current user |
-| DELETE | / | `DeleteUserCommand` | Delete user (soft delete) |
-
-### OperationClaimsController (`/api/OperationClaims`) - 5 endpoints
-
-| Method | Route | Handler | Description |
-|--------|-------|---------|-------------|
-| GET | /{Id} | `GetByIdOperationClaimQuery` | Get claim by ID |
-| GET | / | `GetListOperationClaimQuery` | List claims (paginated) |
-| POST | / | `CreateOperationClaimCommand` | Create new claim |
-| PUT | / | `UpdateOperationClaimCommand` | Update claim |
-| DELETE | / | `DeleteOperationClaimCommand` | Delete claim |
-
-### UserOperationClaimsController (`/api/UserOperationClaims`) - 5 endpoints
-
-| Method | Route | Handler | Description |
-|--------|-------|---------|-------------|
-| GET | /{Id} | `GetByIdUserOperationClaimQuery` | Get user-claim by ID |
-| GET | / | `GetListUserOperationClaimQuery` | List user-claims (paginated) |
-| POST | / | `CreateUserOperationClaimCommand` | Assign claim to user |
-| PUT | / | `UpdateUserOperationClaimCommand` | Update user-claim |
-| DELETE | / | `DeleteUserOperationClaimCommand` | Remove claim from user |
-
-## Database Schema
-
-### Entity Relationships
-
-```
-User (1) ←──────→ (*) UserOperationClaim (*) ←──────→ (1) OperationClaim
-  │                                                         │
-  │                                                         │
-  ├── (*) RefreshToken                                      │
-  │                                                         │
-  ├── (0..1) EmailAuthenticator                            │
-  │                                                         │
-  └── (0..1) OtpAuthenticator                              │
-                                                           │
-                                              GeneralOperationClaims.Admin
+# Update database
+dotnet ef database update \
+  --project Backend/src/Persistence/ \
+  --startup-project Backend/src/WebAPI/
 ```
 
-### Entity Fields
+---
 
-| Entity | Key Fields | Timestamps |
-|--------|------------|------------|
-| `User` | Id (Guid), Email, PasswordHash, PasswordSalt, AuthenticatorType | CreatedDate, UpdatedDate, DeletedDate |
-| `OperationClaim` | Id (int), Name | CreatedDate, UpdatedDate, DeletedDate |
-| `UserOperationClaim` | Id (Guid), UserId, OperationClaimId | CreatedDate, UpdatedDate, DeletedDate |
-| `RefreshToken` | Id (Guid), UserId, Token, Expires, Created, Revoked | CreatedDate, UpdatedDate, DeletedDate |
-| `EmailAuthenticator` | Id (Guid), UserId, ActivationKey, IsVerified | CreatedDate, UpdatedDate, DeletedDate |
-| `OtpAuthenticator` | Id (Guid), UserId, SecretKey, IsVerified | CreatedDate, UpdatedDate, DeletedDate |
+## Project Dependencies
+
+### Main Application
+
+```
+WebAPI
+├── Application
+│   ├── Domain
+│   │   ├── Core.Persistence
+│   │   └── Core.Security
+│   ├── Core.Application
+│   ├── Core.Mailing + Core.Mailing.MailKit
+│   ├── Core.CrossCuttingConcerns.Exception
+│   ├── Core.CrossCuttingConcerns.Logging.Serilog.File
+│   ├── Core.Localization.Abstraction
+│   ├── Core.Localization.Resource.Yaml.DependencyInjection
+│   ├── Core.ElasticSearch
+│   └── Core.Security.DependencyInjection
+├── Persistence
+│   ├── Application
+│   ├── Core.Persistence
+│   └── Core.Persistence.DependencyInjection
+├── Infrastructure
+│   └── Application
+├── Core.CrossCuttingConcerns.Exception.WebApi
+├── Core.Localization.WebApi
+├── Core.Persistence.WebApi
+└── Core.Security.WebApi.Swagger
+```
+
+### Core Package Dependencies
+
+```
+Core.Application
+├── Core.CrossCuttingConcerns.Logging.Abstraction
+├── Core.CrossCuttingConcerns.Logging
+├── Core.CrossCuttingConcerns.Exception
+└── Core.Security
+
+Core.Security
+└── Core.Persistence
+
+Core.CrossCuttingConcerns.Exception.WebApi
+├── Core.CrossCuttingConcerns.Logging.Abstraction
+├── Core.CrossCuttingConcerns.Logging
+└── Core.CrossCuttingConcerns.Exception
+```
+
+---
 
 ## Quick Start
 
+### Prerequisites
+
+- .NET 10.0 SDK
+- Docker (for PostgreSQL)
+- Node.js (for frontend, if applicable)
+
+### Run Backend
+
 ```bash
-# Start PostgreSQL (Docker)
-docker run --name infosys-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=InfoSYSDb \
-  -p 5432:5432 -d postgres:16
+# Start PostgreSQL
+docker run --name infosys-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=InfoSYSDb -p 5432:5432 -d postgres:16
 
-# Restore dependencies
-dotnet restore Backend/InfoSYS.sln
-
-# Build solution
-dotnet build Backend/InfoSYS.sln
-
-# Run tests
-dotnet test Backend/tests/StarterProject.Application.Tests/
-
-# Run API (Development)
-dotnet run --project Backend/src/WebAPI/
-
-# Format code
-dotnet csharpier Backend/
-
-# Analyze code
-dotnet roslynator analyze Backend/InfoSYS.sln
-
-# Create migration
-dotnet ef migrations add MigrationName --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
-
-# Update database
+# Run migrations
 dotnet ef database update --project Backend/src/Persistence/ --startup-project Backend/src/WebAPI/
+
+# Start API
+make run-api
+# or
+dotnet run --project Backend/src/WebAPI/
 ```
 
-### Default URLs
-- API: http://localhost:5278
-- Swagger UI: http://localhost:5278/swagger
+### API Access
 
-## Project Stats
+- **Base URL:** http://localhost:5278
+- **Swagger:** http://localhost:5278/swagger
+- **JWT Token Duration:** 8 hours (480 minutes)
+
+---
+
+## Code Statistics
 
 | Metric | Value |
 |--------|-------|
-| **Total C# Files** | 259 |
-| **Total Lines of Code** | 8,911 |
-| Core Package Files | 120 (3,871 LOC) |
-| Starter Project Files | 119 (4,330 LOC) |
-| Test Files | 20 (710 LOC) |
-| **Commands** | 18 |
-| **Queries** | 6 |
-| **Handlers** | 24 |
-| **Controllers** | 5 |
-| **API Endpoints** | 25 |
-| **Repositories** | 6 |
-| **Business Rules** | 4 |
-| **Domain Entities** | 6 |
-| **Core Projects** | 26 |
-| **Pipeline Behaviors** | 7 |
+| Total C# Files | 366 |
+| Total Lines of Code | ~11,438 |
+| Core Packages | 26 |
+| Main Projects | 5 (Domain, Application, Persistence, Infrastructure, WebAPI) |
+| Entity Classes | 6 |
+| API Endpoints | 25 |
+| CQRS Commands | 18 |
+| CQRS Queries | 6 |
+| Business Rule Classes | 4 |
+| Repository Interfaces | 6 |
+| Pipeline Behaviors | 7 |
 
-### Largest Files
-
-| File | Lines | Description |
-|------|-------|-------------|
-| EfRepositoryBase.cs | 464 | Generic EF repository |
-| MockRepositoryHelper.cs | 182 | Test utilities |
-| IQueryableDynamicFilterExtensions.cs | 174 | Dynamic LINQ |
-| ElasticSearchManager.cs | 170 | Elasticsearch client |
-| LoginTests.cs | 146 | Auth tests |
-| AuthenticatorManager.cs | 127 | 2FA service |
-| AuthController.cs | 122 | Auth endpoints |
-| CachingBehavior.cs | 118 | Cache pipeline |
+---
 
 ## Architecture Patterns
 
-| Pattern | Implementation | Evidence |
-|---------|----------------|----------|
-| Clean Architecture | 5 layers | Domain, Application, Infrastructure, Persistence, WebAPI |
-| CQRS | MediatR 14.0.0 | Separate Command/Query handlers |
-| Repository | EfRepositoryBase | IAsyncRepository, IRepository interfaces |
-| Pipeline Behaviors | 7 behaviors | Authorization, Caching, Logging, Validation, Transaction, Performance, CacheRemoving |
-| Soft Delete | Entity timestamps | DeletedDate with cascade support |
-| Dependency Injection | MS.DI | Service registration classes |
-| Business Rules | BaseBusinessRules | Feature-specific rule classes |
+### Clean Architecture Layers
 
-## Important Notes
-
-### Swagger JWT Authentication (Microsoft.OpenApi 2.x)
-
-Swashbuckle 10.x + Microsoft.OpenApi 2.x kullanıldığında `AddSecurityRequirement` için delegate syntax gereklidir:
-
-```csharp
-opt.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-{
-    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
-});
+```
+┌─────────────────────────────────────────────┐
+│                  WebAPI                      │  ← Presentation
+├─────────────────────────────────────────────┤
+│               Application                    │  ← Use Cases (CQRS)
+├─────────────────────────────────────────────┤
+│          Persistence / Infrastructure        │  ← Interface Adapters
+├─────────────────────────────────────────────┤
+│                  Domain                      │  ← Entities
+└─────────────────────────────────────────────┘
 ```
 
-> **Not:** Eski syntax `[{}]` (boş) olarak serialize eder ve Swagger UI Authorization header göndermez.
+### CQRS Flow
 
-### Token Expiration
+```
+Request → Controller → MediatR → Pipeline Behaviors → Handler → Repository → Database
+                                      │
+                                      ├── AuthorizationBehavior
+                                      ├── ValidationBehavior
+                                      ├── CachingBehavior
+                                      ├── LoggingBehavior
+                                      └── TransactionBehavior
+```
 
-JWT access token süresi 8 saat (480 dakika) olarak ayarlanmıştır.
+### Repository Pattern
 
-## Context7 Documentation References
+```csharp
+// Interface (Application layer)
+public interface IUserRepository : IAsyncRepository<User, Guid>, IRepository<User, Guid> { }
 
-For up-to-date documentation on key libraries:
-
-- **MediatR**: `/jbogard/mediatr` - Pipeline behaviors, CQRS patterns
-- **EF Core**: `/dotnet/entityframework.docs` - Repository, DbContext, migrations
-- **FluentValidation**: `/fluentvalidation/fluentvalidation` - Validation rules, integration
+// Implementation (Persistence layer)
+public class UserRepository : EfRepositoryBase<User, Guid, BaseDbContext>, IUserRepository { }
+```
 
 ---
-*Updated: 2025-12-18 | Auto-generated with /index --ultrathink --seq --c7 command*
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| 2026-01-02 | Deep regeneration with Serena MCP symbolic analysis |
+| 2025-12-18 | Initial PROJECT_INDEX.md creation |
+| 2025-12-17 | PostgreSQL support added |
+| 2025-12-16 | Namespace rename to InfoSystem.Core |
