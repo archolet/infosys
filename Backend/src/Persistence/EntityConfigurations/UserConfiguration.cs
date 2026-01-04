@@ -47,6 +47,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 {
                     Id = AdminId,
                     Email = "info@info.com.tr",
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Status = true,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt
                 };

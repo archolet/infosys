@@ -64,6 +64,10 @@ public class AuthController : BaseController
         RevokeTokenCommand revokeTokenCommand =
             new() { Token = refreshToken ?? getRefreshTokenFromCookies(), IpAddress = getIpAddress() };
         RevokedTokenResponse result = await Mediator.Send(revokeTokenCommand);
+
+        // Delete the refresh token cookie
+        deleteRefreshTokenCookie();
+
         return Ok(result);
     }
 
@@ -118,5 +122,10 @@ public class AuthController : BaseController
     {
         CookieOptions cookieOptions = new() { HttpOnly = true, Expires = DateTime.UtcNow.AddDays(7) };
         Response.Cookies.Append(key: "refreshToken", refreshToken.Token, cookieOptions);
+    }
+
+    private void deleteRefreshTokenCookie()
+    {
+        Response.Cookies.Delete("refreshToken");
     }
 }

@@ -2,6 +2,10 @@
 
 public class User : InfoSystem.Core.Security.Entities.User<Guid>
 {
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public bool Status { get; set; } = true;
+
     public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; } = default!;
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = default!;
     public virtual ICollection<OtpAuthenticator> OtpAuthenticators { get; set; } = default!;
