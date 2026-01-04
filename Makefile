@@ -33,10 +33,76 @@ define kill_port
 	fi
 endef
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Quick Start - Tek Komutla Herşeyi Başlat (Next.js + API)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Tek komutla: PostgreSQL kontrol + portları temizle + API + Next.js başlat
+start: check-postgres kill-all
+	@echo ""
+	@echo "🚀 InfoSYS başlatılıyor..."
+	@echo "══════════════════════════════════════════════════════"
+	@echo ""
+	@# API'yi background'da başlat
+	@echo "🖥️  Backend API başlatılıyor (port $(API_PORT))..."
+	@dotnet run --project Backend/src/WebAPI/ > /tmp/infosys-api.log 2>&1 &
+	@sleep 3
+	@# API health check
+	@if curl -s http://localhost:$(API_PORT)/swagger/index.html > /dev/null 2>&1; then \
+		echo "   ✅ API hazır: http://localhost:$(API_PORT)"; \
+	else \
+		echo "   ⏳ API başlatılıyor... (birkaç saniye bekleyin)"; \
+	fi
+	@echo ""
+	@echo "🌐 Next.js Frontend başlatılıyor (port $(NEXTJS_PORT))..."
+	@echo "══════════════════════════════════════════════════════"
+	@echo ""
+	@echo "📱 Tarayıcıda aç: http://localhost:$(NEXTJS_PORT)"
+	@echo "👤 Giriş: info@info.com.tr / 12345"
+	@echo ""
+	@echo "══════════════════════════════════════════════════════"
+	cd frontend && npm run dev
+
+# PostgreSQL Docker container kontrolü
+check-postgres:
+	@echo "🐘 PostgreSQL kontrol ediliyor..."
+	@if docker ps --format '{{.Names}}' | grep -q 'infosys-postgres'; then \
+		echo "   ✅ PostgreSQL çalışıyor"; \
+	elif docker ps -a --format '{{.Names}}' | grep -q 'infosys-postgres'; then \
+		echo "   ⏳ PostgreSQL başlatılıyor..."; \
+		docker start infosys-postgres > /dev/null 2>&1; \
+		sleep 2; \
+		echo "   ✅ PostgreSQL başlatıldı"; \
+	else \
+		echo "   ⚠️  PostgreSQL container bulunamadı!"; \
+		echo "   → Oluşturmak için:"; \
+		echo "     docker run --name infosys-postgres -e POSTGRES_USER=postgres \\"; \
+		echo "       -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=InfoSYSDb \\"; \
+		echo "       -p 5432:5432 -d postgres:16"; \
+		exit 1; \
+	fi
+
+# API'yi background'da durdur
+stop-api:
+	@echo "🛑 API durduruluyor..."
+	@pkill -f "Backend/src/WebAPI" 2>/dev/null || true
+	@pkill -f "dotnet.*WebAPI" 2>/dev/null || true
+	$(call kill_port,$(API_PORT))
+	@echo "   ✅ API durduruldu"
+
+# Tüm servisleri durdur
+stop: stop-api kill-nextjs
+	@echo ""
+	@echo "🛑 Tüm servisler durduruldu"
+
 # Default target
 help:
 	@echo "InfoSYS ERP Build Commands"
 	@echo "=========================="
+	@echo ""
+	@echo "⚡ Quick Start (Önerilen):"
+	@echo "  make start            - Tek komutla herşeyi başlat (PostgreSQL + API + Next.js)"
+	@echo "  make stop             - Tüm servisleri durdur"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build-all      - Tüm projeleri build et (InfoSYS.sln)"
