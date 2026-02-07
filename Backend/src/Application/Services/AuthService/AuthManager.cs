@@ -92,14 +92,23 @@ public class AuthManager : IAuthService
 
     public async Task RevokeDescendantRefreshTokens(RefreshToken refreshToken, string ipAddress, string reason)
     {
-        RefreshToken? childToken = await _refreshTokenRepository.GetAsync(predicate: r =>
-            r.Token == refreshToken.ReplacedByToken
-        );
+        string? replacedByToken = refreshToken.ReplacedByToken;
 
-        if (childToken?.RevokedDate != null && childToken.ExpirationDate <= DateTime.UtcNow)
-            await RevokeRefreshToken(childToken, ipAddress, reason);
-        else
-            await RevokeDescendantRefreshTokens(refreshToken: childToken!, ipAddress, reason);
+        while (!string.IsNullOrWhiteSpace(replacedByToken))
+        {
+            RefreshToken? childToken = await _refreshTokenRepository.GetAsync(predicate: r =>
+                r.Token == replacedByToken
+            );
+            if (childToken is null)
+                return;
+
+            string? nextReplacedByToken = childToken.ReplacedByToken;
+
+            if (childToken.RevokedDate is null && childToken.ExpirationDate > DateTime.UtcNow)
+                await RevokeRefreshToken(childToken, ipAddress, reason, nextReplacedByToken);
+
+            replacedByToken = nextReplacedByToken;
+        }
     }
 
     public Task<RefreshToken> CreateRefreshToken(User user, string ipAddress)

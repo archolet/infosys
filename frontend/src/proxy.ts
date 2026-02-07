@@ -7,7 +7,7 @@ const publicRoutes = ['/login', '/register', '/forgot-password'];
 // Routes that authenticated users should be redirected away from
 const authRoutes = ['/login', '/register'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check for refresh token cookie (indicates potential auth)
@@ -15,9 +15,9 @@ export function middleware(request: NextRequest) {
   const hasRefreshToken = request.cookies.has('refreshToken');
 
   // If accessing auth routes (login/register) while having refresh token,
-  // redirect to dashboard (they're likely already logged in)
+  // redirect to POS (they're likely already logged in)
   if (authRoutes.includes(pathname) && hasRefreshToken) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/pos', request.url));
   }
 
   // If accessing protected routes without refresh token, redirect to login

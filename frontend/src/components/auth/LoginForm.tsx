@@ -6,6 +6,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
+function getSafeRedirect(redirectPath: string | null): string {
+  if (!redirectPath) return '/pos';
+  if (!redirectPath.startsWith('/') || redirectPath.startsWith('//'))
+    return '/pos';
+  if (redirectPath.startsWith('/login') || redirectPath.startsWith('/register'))
+    return '/pos';
+  return redirectPath;
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,10 +28,11 @@ export function LoginForm() {
     clearError();
 
     try {
-      await login({ email, password });
+      const isLoggedIn = await login({ email, password });
+      if (!isLoggedIn) return;
 
-      // Redirect to original destination or dashboard
-      const redirect = searchParams.get('redirect') || '/dashboard';
+      // Redirect to original destination or POS
+      const redirect = getSafeRedirect(searchParams.get('redirect'));
       router.push(redirect);
     } catch {
       // Error is already set in context

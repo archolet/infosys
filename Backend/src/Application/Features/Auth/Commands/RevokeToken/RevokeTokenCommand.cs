@@ -1,19 +1,14 @@
-﻿using Application.Features.Auth.Constants;
-using Application.Features.Auth.Rules;
+﻿using Application.Features.Auth.Rules;
 using Application.Services.AuthService;
 using AutoMapper;
 using MediatR;
-using InfoSystem.Core.Application.Pipelines.Authorization;
-using static Application.Features.Auth.Constants.AuthOperationClaims;
 
 namespace Application.Features.Auth.Commands.RevokeToken;
 
-public class RevokeTokenCommand : IRequest<RevokedTokenResponse>, ISecuredRequest
+public class RevokeTokenCommand : IRequest<RevokedTokenResponse>
 {
     public string Token { get; set; }
     public string IpAddress { get; set; }
-
-    public string[] Roles => [Admin, AuthOperationClaims.RevokeToken];
 
     public RevokeTokenCommand()
     {

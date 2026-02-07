@@ -23,7 +23,7 @@ interface AuthContextType {
   isInitialized: boolean;
   error: string | null;
   // Actions
-  login: (credentials: LoginRequest) => Promise<void>;
+  login: (credentials: LoginRequest) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<boolean>;
   clearError: () => void;
@@ -106,18 +106,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Login function
   const login = useCallback(
-    async (credentials: LoginRequest) => {
+    async (credentials: LoginRequest): Promise<boolean> => {
       setIsLoading(true);
       setError(null);
 
       try {
         const response = await authApi.login(credentials);
 
-        if (response.requiredAuthenticatorType && response.requiredAuthenticatorType !== 'None') {
+        if (
+          response.requiredAuthenticatorType &&
+          response.requiredAuthenticatorType !== 'None'
+        ) {
           // 2FA required
-          setError(`Two-factor authentication required: ${response.requiredAuthenticatorType}`);
-          setIsLoading(false);
-          return;
+          setError(
+            `Two-factor authentication required: ${response.requiredAuthenticatorType}`
+          );
+          return false;
         }
 
         if (response.accessToken) {
@@ -126,11 +130,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // useEffect runs after render, but we need token NOW for API call
           apiClient.setAccessToken(response.accessToken.token);
           await fetchCurrentUser();
+          return true;
         }
+
+        setError('Login failed. Access token was not returned by the server.');
+        return false;
       } catch (err: unknown) {
         const apiError = err as ApiError;
         const errorMessage =
-          apiError?.detail || apiError?.title || 'Login failed. Please try again.';
+          apiError?.detail ||
+          apiError?.title ||
+          'Login failed. Please try again.';
         setError(errorMessage);
         throw err;
       } finally {
@@ -168,9 +178,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const timeout = setTimeout(() => {
-      refreshAccessToken();
-    }, Math.max(0, timeUntilExpiry - refreshBuffer));
+    const timeout = setTimeout(
+      () => {
+        refreshAccessToken();
+      },
+      Math.max(0, timeUntilExpiry - refreshBuffer)
+    );
 
     return () => clearTimeout(timeout);
   }, [accessToken, refreshAccessToken]);

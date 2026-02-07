@@ -1,6 +1,5 @@
 ﻿using Application.Services.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using InfoSystem.Core.Persistence.DependencyInjection;
@@ -17,10 +16,6 @@ public static class PersistenceServiceRegistration
         
         services.AddDbContext<BaseDbContext>(options =>
         {
-            // Suppress PendingModelChangesWarning (caused by HasData with dynamic values in seed data)
-            options.ConfigureWarnings(warnings => 
-                warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-            
             if (string.IsNullOrEmpty(connectionString))
             {
                 // Development: InMemory database

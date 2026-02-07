@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Core.CrossCuttingConcerns.FileTransfer.Abstraction;
+using InfoSystem.Core.Security.Constants;
 
 namespace WebAPI.Controllers;
 
@@ -9,7 +10,7 @@ namespace WebAPI.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous] // Test icin auth bypass
+[Authorize(Roles = GeneralOperationClaims.Admin)]
 public class FileTransferTestController : ControllerBase
 {
     private readonly IFileTransferService _fileTransferService;

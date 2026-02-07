@@ -12,7 +12,9 @@ export default function LoginPage() {
         {/* Logo / Brand */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 dark:bg-white">
-            <span className="text-xl font-bold text-white dark:text-zinc-900">I</span>
+            <span className="text-xl font-bold text-white dark:text-zinc-900">
+              I
+            </span>
           </div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
             Welcome to InfoSYS

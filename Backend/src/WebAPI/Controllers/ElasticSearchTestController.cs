@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using InfoSystem.Core.ElasticSearch;
 using InfoSystem.Core.ElasticSearch.Models;
+using InfoSystem.Core.Security.Constants;
 
 namespace WebAPI.Controllers;
 
@@ -10,7 +11,7 @@ namespace WebAPI.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous] // Test icin auth bypass
+[Authorize(Roles = GeneralOperationClaims.Admin)]
 public class ElasticSearchTestController : ControllerBase
 {
     private readonly IElasticSearch _elasticSearch;

@@ -1,7 +1,7 @@
 # InfoSYS ERP - Build Automation
 # Multi-solution yönetimi için Makefile
 
-.PHONY: help build-all build-core build-backend build-frontend build-nextjs test run-api run-ui run-nextjs format clean
+.PHONY: help build-all build-core build-backend build-frontend build-nextjs test smoke-auth smoke-auth-live preflight preflight-strict deploy-dry-run run-api run-ui run-nextjs format clean
 .PHONY: port-status kill-api kill-ui kill-nextjs kill-all restart-api restart-ui restart-nextjs restart-all
 .PHONY: fresh-core fresh-backend fresh-frontend fresh-nextjs fresh-all
 .PHONY: ps ka ku kn kall fc fb ff fn fa  # Kısa alias'lar
@@ -57,13 +57,15 @@ start: check-postgres kill-all
 	@echo "🌐 Next.js Frontend başlatılıyor (port $(NEXTJS_PORT))..."
 	@echo "══════════════════════════════════════════════════════"
 	@echo ""
-	@echo "📱 Tarayıcıda aç: http://localhost:$(NEXTJS_PORT)"
+	@echo "🔒 Chrome Incognito modda açılıyor..."
 	@echo "👤 Giriş: info@info.com.tr / 12345"
 	@echo ""
 	@echo "══════════════════════════════════════════════════════"
+	@# Chrome'u incognito modda aç (3 saniye bekle Next.js başlayana kadar)
+	@(sleep 3 && open -na "Google Chrome" --args --incognito "http://localhost:$(NEXTJS_PORT)") &
 	cd frontend && npm run dev
 
-# PostgreSQL Docker container kontrolü
+# PostgreSQL Docker container kontrolü (docker-compose.yml kullanır)
 check-postgres:
 	@echo "🐘 PostgreSQL kontrol ediliyor..."
 	@if docker ps --format '{{.Names}}' | grep -q 'infosys-postgres'; then \
@@ -71,16 +73,28 @@ check-postgres:
 	elif docker ps -a --format '{{.Names}}' | grep -q 'infosys-postgres'; then \
 		echo "   ⏳ PostgreSQL başlatılıyor..."; \
 		docker start infosys-postgres > /dev/null 2>&1; \
-		sleep 2; \
+		sleep 3; \
 		echo "   ✅ PostgreSQL başlatıldı"; \
 	else \
-		echo "   ⚠️  PostgreSQL container bulunamadı!"; \
-		echo "   → Oluşturmak için:"; \
-		echo "     docker run --name infosys-postgres -e POSTGRES_USER=postgres \\"; \
-		echo "       -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=InfoSYSDb \\"; \
-		echo "       -p 5432:5432 -d postgres:16"; \
-		exit 1; \
+		echo "   ⚠️  PostgreSQL container bulunamadı, oluşturuluyor..."; \
+		docker compose up -d; \
+		echo "   ⏳ PostgreSQL hazır olması bekleniyor..."; \
+		sleep 5; \
+		echo "   ✅ PostgreSQL oluşturuldu ve başlatıldı"; \
 	fi
+	@# Port 5432'nin gerçekten dinlediğini doğrula
+	@for i in 1 2 3 4 5; do \
+		if docker exec infosys-postgres pg_isready -U infosys -d InfoSYSDb > /dev/null 2>&1; then \
+			echo "   ✅ PostgreSQL bağlantısı doğrulandı"; \
+			break; \
+		fi; \
+		if [ $$i -eq 5 ]; then \
+			echo "   ❌ PostgreSQL bağlantı hatası! 'docker compose logs postgres' ile kontrol edin"; \
+			exit 1; \
+		fi; \
+		echo "   ⏳ Bekleniyor... ($$i/5)"; \
+		sleep 2; \
+	done
 
 # API'yi background'da durdur
 stop-api:
@@ -101,26 +115,26 @@ help:
 	@echo "=========================="
 	@echo ""
 	@echo "⚡ Quick Start (Önerilen):"
-	@echo "  make start            - Tek komutla herşeyi başlat (PostgreSQL + API + Next.js)"
+	@echo "  make start            - Tek komutla herşeyi başlat (PostgreSQL + API + Next.js + Chrome Incognito)"
 	@echo "  make stop             - Tüm servisleri durdur"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build-all      - Tüm projeleri build et (InfoSYS.sln)"
 	@echo "  make build-core     - Sadece Core paketlerini build et"
 	@echo "  make build-backend  - Sadece Backend projelerini build et"
-	@echo "  make build-frontend - Sadece Blazor Frontend'i build et"
+	@echo "  make build-frontend - Frontend'i build et (Next.js alias)"
 	@echo "  make build-nextjs   - Next.js frontend'i build et"
 	@echo ""
 	@echo "Run:"
 	@echo "  make run-api        - WebAPI'yi çalıştır (localhost:$(API_PORT))"
 	@echo "  make run-nextjs     - Next.js Frontend çalıştır (localhost:$(NEXTJS_PORT))"
-	@echo "  make run-ui         - Blazor UI'ı çalıştır (localhost:$(UI_HTTP_PORT)/$(UI_HTTPS_PORT))"
+	@echo "  make run-ui         - Next.js UI çalıştır (run-nextjs alias)"
 	@echo "  make run-all        - API ve UI'ı birlikte çalıştır"
 	@echo ""
 	@echo "Fresh Start (Sıfırdan Başlat):"
 	@echo "  make fresh-core     - Core bin/obj sil + rebuild      (alias: fc)"
 	@echo "  make fresh-backend  - Backend sıfırla + API başlat    (alias: fb)"
-	@echo "  make fresh-frontend - Blazor sıfırla + UI başlat      (alias: ff)"
+	@echo "  make fresh-frontend - Next.js sıfırla + UI başlat     (alias: ff)"
 	@echo "  make fresh-nextjs   - Next.js node_modules + rebuild  (alias: fn)"
 	@echo "  make fresh-all      - Tümünü sıfırla + başlat         (alias: fa)"
 	@echo ""
@@ -132,11 +146,16 @@ help:
 	@echo "  make kill-all       - Tüm portları serbest bırak    (alias: kall)"
 	@echo "  make restart-api    - API'yi yeniden başlat (kill + run)"
 	@echo "  make restart-nextjs - Next.js'i yeniden başlat (kill + run)"
-	@echo "  make restart-ui     - Blazor UI'ı yeniden başlat (kill + run)"
+	@echo "  make restart-ui     - Next.js UI'ı yeniden başlat (kill + run)"
 	@echo ""
 	@echo "Test:"
 	@echo "  make test           - Tüm testleri çalıştır"
 	@echo "  make test-filter F= - Belirli testi çalıştır (örn: make test-filter F=LoginTests)"
+	@echo "  make smoke-auth     - API + Frontend auth smoke testi (login/refresh/revoke)"
+	@echo "  make smoke-auth-live - smoke testi sonrası servisleri açık bırak"
+	@echo "  make preflight      - Release öncesi kalite + konfigürasyon kontrolü"
+	@echo "  make preflight-strict - preflight'ı strict modda çalıştır (secret zorunlu)"
+	@echo "  make deploy-dry-run - Gerçek deploy olmadan uçtan uca dry-run"
 	@echo ""
 	@echo "Other:"
 	@echo "  make format         - Kodu formatla (CSharpier)"
@@ -157,8 +176,8 @@ build-backend:
 	dotnet build Backend/InfoSYS.Backend.slnf
 
 build-frontend:
-	@echo "🔨 Building Blazor Frontend..."
-	dotnet build Frontend/InfoSYS.WebUI/InfoSYS.WebUI.csproj
+	@echo "🔨 Building Frontend (Next.js)..."
+	@$(MAKE) build-nextjs
 
 build-nextjs:
 	@echo "🔨 Building Next.js Frontend..."
@@ -188,20 +207,13 @@ run-nextjs:
 	cd frontend && npm run dev
 
 run-ui:
-	@echo "🚀 Starting Blazor UI on ports $(UI_HTTP_PORT)/$(UI_HTTPS_PORT)..."
-	@# Port meşgul kontrolü
-	@PID=$$(lsof -t -i :$(UI_HTTP_PORT) -sTCP:LISTEN 2>/dev/null); \
-	if [ -n "$$PID" ]; then \
-		echo "⚠️  Port $(UI_HTTP_PORT) meşgul (PID: $$PID)"; \
-		echo "   → Önce 'make kill-ui' çalıştırın veya 'make restart-ui' kullanın"; \
-		exit 1; \
-	fi
-	dotnet run --project Frontend/InfoSYS.WebUI/
+	@echo "🚀 Starting UI (Next.js) on port $(NEXTJS_PORT)..."
+	@$(MAKE) run-nextjs
 
 run-all:
-	@echo "🚀 Starting API and UI..."
+	@echo "🚀 Starting API and Next.js..."
 	@$(MAKE) run-api &
-	@$(MAKE) run-ui
+	@$(MAKE) run-nextjs
 
 # Test commands
 test:
@@ -211,6 +223,26 @@ test:
 test-filter:
 	@echo "🧪 Running filtered tests: $(F)..."
 	dotnet test Backend/tests/StarterProject.Application.Tests/ --filter "FullyQualifiedName~$(F)"
+
+smoke-auth:
+	@echo "🧪 Running auth smoke test (API + Frontend)..."
+	./scripts/smoke-auth-flow.sh
+
+smoke-auth-live:
+	@echo "🧪 Running auth smoke test (services will stay up)..."
+	KEEP_SERVICES_RUNNING=1 ./scripts/smoke-auth-flow.sh
+
+preflight:
+	@echo "🔎 Running release preflight..."
+	STRICT=0 ./scripts/release-preflight.sh
+
+preflight-strict:
+	@echo "🔒 Running release preflight (STRICT)..."
+	STRICT=1 ./scripts/release-preflight.sh
+
+deploy-dry-run:
+	@echo "🚢 Running deploy dry-run (no real deployment)..."
+	STRICT=0 KEEP_SERVICES_RUNNING=0 ./scripts/deploy-dry-run.sh
 
 # Utility commands
 format:
@@ -357,17 +389,8 @@ fresh-backend: kill-api
 
 # Blazor Frontend: bin/obj sil + rebuild + Blazor UI başlat
 fresh-frontend: kill-ui
-	@echo "🔄 Blazor Frontend sıfırdan başlatılıyor..."
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "   ↳ bin/obj klasörleri siliniyor..."
-	@find Frontend -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
-	@echo "   ↳ NuGet restore ediliyor..."
-	@dotnet restore Frontend/InfoSYS.WebUI/InfoSYS.WebUI.csproj --verbosity quiet
-	@echo "   ↳ Build ediliyor..."
-	@dotnet build Frontend/InfoSYS.WebUI/InfoSYS.WebUI.csproj --no-restore --verbosity quiet
-	@echo "   ↳ Blazor UI başlatılıyor (port $(UI_HTTP_PORT)/$(UI_HTTPS_PORT))..."
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	dotnet run --project Frontend/InfoSYS.WebUI/ --no-build
+	@echo "🔄 Frontend (Next.js) sıfırdan başlatılıyor..."
+	@$(MAKE) fresh-nextjs
 
 # Next.js: node_modules sil + reinstall + dev server başlat
 fresh-nextjs: kill-nextjs
@@ -389,7 +412,7 @@ fresh-all: kill-all
 	@# Adım 1: Tüm bin/obj temizle
 	@echo "📁 [1/4] Tüm bin/obj klasörleri siliniyor..."
 	@find Backend -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
-	@find Frontend -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
+	@find frontend -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
 	@echo "   ✓ Temizlik tamamlandı"
 	@echo ""
 	@# Adım 2: Core build
@@ -404,15 +427,15 @@ fresh-all: kill-all
 	@$(MAKE) run-api &
 	@sleep 3
 	@echo ""
-	@# Adım 4: Frontend build + UI başlat
-	@echo "🌐 [4/4] Frontend build + Blazor UI başlatılıyor..."
-	@dotnet build Frontend/InfoSYS.WebUI/InfoSYS.WebUI.csproj --verbosity quiet
+	@# Adım 4: Frontend build + Next.js başlat
+	@echo "🌐 [4/4] Frontend build + Next.js başlatılıyor..."
+	@cd frontend && npm run build --silent
 	@echo "   ✓ Frontend build tamamlandı"
 	@echo ""
 	@echo "══════════════════════════════════════════════════════"
-	@echo "✅ Tüm projeler hazır! API: $(API_PORT), UI: $(UI_HTTP_PORT)/$(UI_HTTPS_PORT)"
+	@echo "✅ Tüm projeler hazır! API: $(API_PORT), Next.js: $(NEXTJS_PORT)"
 	@echo "══════════════════════════════════════════════════════"
-	$(MAKE) run-ui
+	$(MAKE) run-nextjs
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Kısa Alias'lar (Hızlı erişim)

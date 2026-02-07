@@ -36,7 +36,7 @@ public class OperationClaimBusinessRules : BaseBusinessRules
     public async Task OperationClaimIdShouldExistWhenSelected(int id)
     {
         bool doesExist = await _operationClaimRepository.AnyAsync(predicate: b => b.Id == id);
-        if (doesExist)
+        if (!doesExist)
             await throwBusinessException(OperationClaimsMessages.NotExists);
     }
 

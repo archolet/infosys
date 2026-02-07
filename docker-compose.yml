@@ -4,9 +4,9 @@ services:
     container_name: infosys-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: infosys
-      POSTGRES_PASSWORD: InfoSYS_2024!
-      POSTGRES_DB: InfoSYSDb
+      POSTGRES_USER: ${POSTGRES_USER:-infosys}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-InfoSYS_2024!}
+      POSTGRES_DB: ${POSTGRES_DB:-InfoSYSDb}
     ports:
       - "5432:5432"
     volumes:
@@ -23,8 +23,8 @@ services:
     container_name: infosys-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: info@info.com.tr
-      PGADMIN_DEFAULT_PASSWORD: InfoSYS_2024!
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-info@info.com.tr}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-InfoSYS_2024!}
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
       - "5050:80"

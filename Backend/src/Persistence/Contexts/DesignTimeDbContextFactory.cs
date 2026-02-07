@@ -11,25 +11,29 @@ namespace Persistence.Contexts;
 /// </summary>
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<BaseDbContext>
 {
-    private const string ConnectionString = "Host=localhost;Port=5432;Database=InfoSYSDb;Username=infosys;Password=InfoSYS_2024!";
-
     public BaseDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<BaseDbContext>();
-        
-        // Suppress PendingModelChangesWarning for migrations
-        optionsBuilder.ConfigureWarnings(warnings => 
-            warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-        
-        optionsBuilder.UseNpgsql(ConnectionString);
+        string? connectionString =
+            Environment.GetEnvironmentVariable("ConnectionStrings__BaseDb")
+            ?? Environment.GetEnvironmentVariable("INFOSYS_CONNECTIONSTRING_BASEDB");
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new InvalidOperationException(
+                "ConnectionStrings__BaseDb bulunamadi. EF migration icin environment variable tanimlayin."
+            );
 
-        // Design-time için minimal configuration
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:BaseDb"] = ConnectionString
-            })
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(
+                new Dictionary<string, string?> { ["ConnectionStrings:BaseDb"] = connectionString }
+            )
             .Build();
+
+        var optionsBuilder = new DbContextOptionsBuilder<BaseDbContext>();
+
+        // Suppress PendingModelChangesWarning for migrations
+        optionsBuilder.ConfigureWarnings(warnings =>
+            warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+
+        optionsBuilder.UseNpgsql(connectionString);
 
         return new BaseDbContext(optionsBuilder.Options, configuration);
     }

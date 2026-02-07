@@ -58,11 +58,15 @@ builder
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddEndpointsApiExplorer();
+const string webApiConfigurationSection = "WebAPIConfiguration";
+WebApiConfiguration webApiConfiguration =
+    builder.Configuration.GetSection(webApiConfigurationSection).Get<WebApiConfiguration>()
+    ?? throw new InvalidOperationException($"\"{webApiConfigurationSection}\" section cannot found in configuration.");
 builder.Services.AddCors(opt =>
-    opt.AddDefaultPolicy(p =>
-    {
-        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    })
+    opt.AddPolicy(
+        "WebApiCors",
+        p => p.WithOrigins(webApiConfiguration.AllowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+    )
 );
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -106,17 +110,13 @@ if (app.Environment.IsProduction())
 
 app.UseDbMigrationApplier();
 
+app.UseCors("WebApiCors");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
-const string webApiConfigurationSection = "WebAPIConfiguration";
-WebApiConfiguration webApiConfiguration =
-    app.Configuration.GetSection(webApiConfigurationSection).Get<WebApiConfiguration>()
-    ?? throw new InvalidOperationException($"\"{webApiConfigurationSection}\" section cannot found in configuration.");
-app.UseCors(opt => opt.WithOrigins(webApiConfiguration.AllowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
-
 app.UseResponseLocalization();
+
+app.MapControllers();
 
 app.Run();

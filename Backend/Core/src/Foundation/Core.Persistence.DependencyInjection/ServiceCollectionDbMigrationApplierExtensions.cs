@@ -8,17 +8,15 @@ public static class ServiceCollectionDbMigrationApplierExtensions
 {
     public static IServiceCollection AddDbMigrationApplier<TDbContext>(
         this IServiceCollection services,
-        Func<ServiceProvider, TDbContext> contextFactory
+        Func<IServiceProvider, TDbContext> contextFactory
     )
         where TDbContext : DbContext
     {
-        ServiceProvider buildServiceProvider = services.BuildServiceProvider();
-
         _ = services.AddTransient<IDbMigrationApplierService, DbMigrationApplierManager<TDbContext>>(
-            _ => new DbMigrationApplierManager<TDbContext>(contextFactory(buildServiceProvider))
+            provider => new DbMigrationApplierManager<TDbContext>(contextFactory(provider))
         );
         _ = services.AddTransient<IDbMigrationApplierService<TDbContext>, DbMigrationApplierManager<TDbContext>>(
-            _ => new DbMigrationApplierManager<TDbContext>(contextFactory(buildServiceProvider))
+            provider => new DbMigrationApplierManager<TDbContext>(contextFactory(provider))
         );
 
         return services;

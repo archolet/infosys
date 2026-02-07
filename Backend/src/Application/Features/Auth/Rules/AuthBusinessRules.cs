@@ -70,7 +70,7 @@ public class AuthBusinessRules : BaseBusinessRules
 
     public async Task RefreshTokenShouldBeActive(RefreshToken refreshToken)
     {
-        if (refreshToken.RevokedDate != null && DateTime.UtcNow >= refreshToken.ExpirationDate)
+        if (refreshToken.RevokedDate != null || DateTime.UtcNow >= refreshToken.ExpirationDate)
             await throwBusinessException(AuthMessages.InvalidRefreshToken);
     }
 

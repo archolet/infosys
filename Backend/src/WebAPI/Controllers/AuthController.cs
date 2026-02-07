@@ -51,8 +51,11 @@ public class AuthController : BaseController
     [HttpGet("RefreshToken")]
     public async Task<IActionResult> RefreshToken()
     {
+        if (!tryGetRefreshTokenFromCookies(out string? refreshToken))
+            return Unauthorized("Refresh token is not found in request cookies.");
+
         RefreshTokenCommand refreshTokenCommand =
-            new() { RefreshToken = getRefreshTokenFromCookies(), IpAddress = getIpAddress() };
+            new() { RefreshToken = refreshToken!, IpAddress = getIpAddress() };
         RefreshedTokensResponse result = await Mediator.Send(refreshTokenCommand);
         setRefreshTokenToCookie(result.RefreshToken);
         return Created(uri: "", result.AccessToken);
@@ -61,8 +64,12 @@ public class AuthController : BaseController
     [HttpPut("RevokeToken")]
     public async Task<IActionResult> RevokeToken([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string? refreshToken)
     {
+        string? tokenToRevoke = refreshToken;
+        if (string.IsNullOrWhiteSpace(tokenToRevoke) && !tryGetRefreshTokenFromCookies(out tokenToRevoke))
+            return Unauthorized("Refresh token is not found in request cookies.");
+
         RevokeTokenCommand revokeTokenCommand =
-            new() { Token = refreshToken ?? getRefreshTokenFromCookies(), IpAddress = getIpAddress() };
+            new() { Token = tokenToRevoke!, IpAddress = getIpAddress() };
         RevokedTokenResponse result = await Mediator.Send(revokeTokenCommand);
 
         // Delete the refresh token cookie
@@ -113,19 +120,48 @@ public class AuthController : BaseController
         return Ok();
     }
 
-    private string getRefreshTokenFromCookies()
+    private bool tryGetRefreshTokenFromCookies(out string? refreshToken)
     {
-        return Request.Cookies["refreshToken"] ?? throw new ArgumentException("Refresh token is not found in request cookies.");
+        bool hasCookie = Request.Cookies.TryGetValue("refreshToken", out string? cookieValue);
+        refreshToken = hasCookie && !string.IsNullOrWhiteSpace(cookieValue) ? cookieValue : null;
+        return refreshToken is not null;
     }
 
     private void setRefreshTokenToCookie(RefreshToken refreshToken)
     {
-        CookieOptions cookieOptions = new() { HttpOnly = true, Expires = DateTime.UtcNow.AddDays(7) };
-        Response.Cookies.Append(key: "refreshToken", refreshToken.Token, cookieOptions);
+        Response.Cookies.Append(
+            key: "refreshToken",
+            value: refreshToken.Token,
+            options: createRefreshTokenCookieOptions(refreshToken.ExpirationDate)
+        );
     }
 
     private void deleteRefreshTokenCookie()
     {
-        Response.Cookies.Delete("refreshToken");
+        bool isHttps = Request.IsHttps;
+        Response.Cookies.Delete(
+            key: "refreshToken",
+            options: new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = isHttps,
+                SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax
+            }
+        );
+    }
+
+    private CookieOptions createRefreshTokenCookieOptions(DateTime expiresAt)
+    {
+        bool isHttps = Request.IsHttps;
+        return new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax,
+            Expires = expiresAt,
+            Path = "/",
+            IsEssential = true
+        };
     }
 }
