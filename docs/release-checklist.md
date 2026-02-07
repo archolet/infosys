@@ -1,6 +1,7 @@
 # InfoSYS Release Checklist
 
 ## 1. Environment and Secrets
+- Production environment values are prepared from `.env.example`.
 - `ConnectionStrings__BaseDb` is set for target environment.
 - `TokenOptions__SecurityKey` is production-grade and rotated.
 - `WebAPIConfiguration__AllowedOrigins` only includes trusted frontend domains.
