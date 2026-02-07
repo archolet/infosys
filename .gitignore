@@ -93,6 +93,7 @@ logs/
 # Node.js / npm (Frontend TailwindCSS)
 node_modules/
 package-lock.json
+!frontend/package-lock.json
 npm-debug.log*
 
 # TailwindCSS output (generated file)
